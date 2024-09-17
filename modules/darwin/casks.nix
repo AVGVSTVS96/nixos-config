@@ -2,25 +2,27 @@ _:
 
 [
   # Development Tools
-  "homebrew/cask/docker"
-  "visual-studio-code"
+  # "homebrew/cask/docker"
+  # "visual-studio-code"
+  "visual-studio-code@insiders"
 
   # Communication Tools
-  "discord"
-  "notion"
-  "slack"
-  "telegram"
-  "zoom"
+  # "discord"
+  # "notion"
+  # "slack"
+  # "telegram"
+  # "zoom"
 
   # Utility Tools
-  "syncthing"
+  # "syncthing"
 
   # Entertainment Tools
-  "vlc"
+  # "iina" # Video player
 
   # Productivity Tools
   "raycast"
 
   # Browsers
   "google-chrome"
+  # "arc" # Arc browser
 ]

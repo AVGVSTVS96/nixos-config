@@ -36,20 +36,20 @@ let user = "%USER%"; in
 
   # Load configuration that is shared across systems
   environment.systemPackages = with pkgs; [
-    emacs-unstable
+    # emacs-unstable
   ] ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 
-  launchd.user.agents.emacs.path = [ config.environment.systemPath ];
-  launchd.user.agents.emacs.serviceConfig = {
-    KeepAlive = true;
-    ProgramArguments = [
-      "/bin/sh"
-      "-c"
-      "/bin/wait4path ${pkgs.emacs}/bin/emacs && exec ${pkgs.emacs}/bin/emacs --fg-daemon"
-    ];
-    StandardErrorPath = "/tmp/emacs.err.log";
-    StandardOutPath = "/tmp/emacs.out.log";
-  };
+  # launchd.user.agents.emacs.path = [ config.environment.systemPath ];
+  # launchd.user.agents.emacs.serviceConfig = {
+  #   KeepAlive = true;
+  #   ProgramArguments = [
+  #     "/bin/sh"
+  #     "-c"
+  #     "/bin/wait4path ${pkgs.emacs}/bin/emacs && exec ${pkgs.emacs}/bin/emacs --fg-daemon"
+  #   ];
+  #   StandardErrorPath = "/tmp/emacs.err.log";
+  #   StandardOutPath = "/tmp/emacs.out.log";
+  # };
 
   system = {
     stateVersion = 4;
@@ -60,7 +60,7 @@ let user = "%USER%"; in
         ApplePressAndHoldEnabled = false;
 
         # 120, 90, 60, 30, 12, 6, 2
-        KeyRepeat = 2;
+        KeyRepeat = 1;
 
         # 120, 94, 68, 35, 25, 15
         InitialKeyRepeat = 15;
@@ -68,6 +68,7 @@ let user = "%USER%"; in
         "com.apple.mouse.tapBehavior" = 1;
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
+        "com.apple.swipescrolldirection" = false;
       };
 
       dock = {

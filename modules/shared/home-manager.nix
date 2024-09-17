@@ -5,9 +5,99 @@ let name = "%NAME%";
     email = "%EMAIL%"; in
 {
   # Shared shell configuration
+  fd.enable = true;
+
+  fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
+    defaultOptions = ["--height 40%" "--layout=reverse" "--border"];
+    fileWidgetCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
+    fileWidgetOptions = [
+      "--preview 'if [ -d {} ]; then eza --tree --all --level=3 --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
+    ];
+    changeDirWidgetCommand = "fd --type d --hidden --strip-cwd-prefix --exclude .git";
+    changeDirWidgetOptions = ["--preview 'eza --tree --color=always {} | head -200'"];
+  };
+
+  bat = {
+    enable = true;
+    themes = {
+      tokyo-night = {
+        src = pkgs.fetchFromGitHub {
+          owner = "folke";
+          repo = "tokyonight.nvim";
+          rev = "4b386e66a9599057587c30538d5e6192e3d1c181";
+          sha256 = "kxsNappeZSlUkPbxlgGZKKJGGZj2Ny0i2a+6G+8nH7s=";
+        };
+        file = "extras/sublime/tokyonight_night.tmTheme";
+      };
+    };
+    config = {
+      theme = "tokyo-night";
+    };
+  };
+
+  eza = {
+    enable = true;
+    git = true;
+    icons = true;
+  };
+
+  yazi = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      manager = {
+        show_hidden = true;
+        ratio = [ 1 2 5 ];
+      };
+    };
+  };
+
   zsh = {
     enable = true;
     autocd = false;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    enableCompletion = true;
+    shellAliases = {
+      zrc = "lvim ~/.zshrc";
+      szrc = "source ~/.zshrc";
+      exz = "exec zsh";
+      cl = "clear";
+      nixswitch = "darwin-rebuild switch --flake ~/.config/nix-darwin";
+      l = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time";
+      la = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time --all";
+      ls = "l";
+      lsa = "la";
+      lsl = "eza --git --icons=always --color=always --long --no-user";
+      ll = "eza --git --icons=always --color=always --long --no-user -all";
+      lt = "eza --git --icons=always --color=always --long --no-user -all --tree --level=2" ;
+      lt2 = "eza --git --icons=always --color=always --long --no-user -all --tree --level=3";
+      lt3 = "eza --git --icons=always --color=always --long --no-user -all --tree --level=4";
+      ltg = "eza --git --icons=always --color=always --long --no-user --tree --git-ignore";
+    };
+    initExtra = ''
+      # Advanced customization of fzf options via _fzf_comprun function
+      _fzf_comprun() {
+        local command=$1
+        shift
+
+        case "$command" in
+          cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+          export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
+          ssh)          fzf --preview 'dig {}'                   "$@" ;;
+          *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+        esac
+      }
+
+
+      # -- fzf with bat and eza previews --
+      show_file_or_dir_preview='if [ -d {} ]; then eza --tree --all --level=3 --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'
+      alias lspe="fzf --preview '$show_file_or_dir_preview'"
+      alias lsp="fd --max-depth 1 --hidden --follow --exclude .git | fzf --preview '$show_file_or_dir_preview'"
+    '';
     plugins = [
       {
         name = "powerlevel10k";
@@ -20,7 +110,6 @@ let name = "%NAME%";
         file = "p10k.zsh";
       }
     ];
-
     initExtraFirst = ''
       if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -74,6 +163,10 @@ let name = "%NAME%";
       pull.rebase = true;
       rebase.autoStash = true;
     };
+  };
+
+  lazygit = {
+    enable = true;
   };
 
   vim = {
@@ -184,21 +277,21 @@ let name = "%NAME%";
       let g:airline_theme='bubblegum'
       let g:airline_powerline_fonts = 1
       '';
-     };
+  };
 
   alacritty = {
     enable = true;
     settings = {
       cursor = {
-        style = "Block";
+        style = "Underline";
       };
 
       window = {
-        opacity = 1.0;
-        padding = {
-          x = 24;
-          y = 24;
-        };
+        opacity = 0.90;
+        # padding = {
+        #   x = 14;
+        #   y = 14;
+        # };
       };
 
       font = {
@@ -212,42 +305,42 @@ let name = "%NAME%";
         ];
       };
 
-      dynamic_padding = true;
-      decorations = "full";
-      title = "Terminal";
-      class = {
-        instance = "Alacritty";
-        general = "Alacritty";
-      };
+      # dynamic_padding = true;
+      # decorations = "full";
+      # title = "Terminal";
+      # class = {
+      #   instance = "Alacritty";
+      #   general = "Alacritty";
+      # };
 
-      colors = {
-        primary = {
-          background = "0x1f2528";
-          foreground = "0xc0c5ce";
-        };
+      # colors = {
+      #   primary = {
+      #     background = "0x1f2528";
+      #     foreground = "0xc0c5ce";
+      #   };
 
-        normal = {
-          black = "0x1f2528";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xc0c5ce";
-        };
+      #   normal = {
+      #     black = "0x1f2528";
+      #     red = "0xec5f67";
+      #     green = "0x99c794";
+      #     yellow = "0xfac863";
+      #     blue = "0x6699cc";
+      #     magenta = "0xc594c5";
+      #     cyan = "0x5fb3b3";
+      #     white = "0xc0c5ce";
+      #   };
 
-        bright = {
-          black = "0x65737e";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xd8dee9";
-        };
-      };
+      #   bright = {
+      #     black = "0x65737e";
+      #     red = "0xec5f67";
+      #     green = "0x99c794";
+      #     yellow = "0xfac863";
+      #     blue = "0x6699cc";
+      #     magenta = "0xc594c5";
+      #     cyan = "0x5fb3b3";
+      #     white = "0xd8dee9";
+      #   };
+      # };
     };
   };
 
