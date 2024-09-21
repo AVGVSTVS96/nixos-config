@@ -59,7 +59,7 @@ in
         stateVersion = "23.11";
       };
       programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
-
+      xdg.enable = true; 
       # Marked broken Oct 20, 2022 check later to remove this workaround
       # https://github.com/nix-community/home-manager/issues/3344
       # Sept 13, 2024 - This should be fine, no issues reported in last 1.5yrs

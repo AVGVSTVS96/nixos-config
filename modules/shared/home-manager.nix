@@ -38,6 +38,14 @@ let name = "Bassim Shahidy";
     };
   };
 
+  zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    options = [
+      "--cmd cd"
+    ];
+  };
+
   eza = {
     enable = true;
     git = true;
@@ -62,11 +70,14 @@ let name = "Bassim Shahidy";
     syntaxHighlighting.enable = true;
     enableCompletion = true;
     shellAliases = {
-      zrc = "lvim ~/.zshrc";
+      g = "git";
+      zrc = "nvim ~/.zshrc";
       szrc = "source ~/.zshrc";
       exz = "exec zsh";
       cl = "clear";
-      nixswitch = "darwin-rebuild switch --flake ~/.config/nix-darwin";
+      nixswitch = "git add . && nix run .#build-switch";
+      yz = "yazi";
+      lg = "lazygit";
       l = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time";
       la = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time --all";
       ls = "l";
@@ -77,6 +88,7 @@ let name = "Bassim Shahidy";
       lt2 = "eza --git --icons=always --color=always --long --no-user -all --tree --level=3";
       lt3 = "eza --git --icons=always --color=always --long --no-user -all --tree --level=4";
       ltg = "eza --git --icons=always --color=always --long --no-user --tree --git-ignore";
+      nvim = "lvim";
     };
     initExtra = ''
       # Advanced customization of fzf options via _fzf_comprun function
@@ -154,19 +166,47 @@ let name = "Bassim Shahidy";
     lfs = {
       enable = true;
     };
+    # setting `delta.enable = true;` sets 
+    #   `core.pager = "delta"` and
+    #   `interactive.diffFilter = "delta --color-only";`
+    # by default, so they don't need to be set manually
+    delta.enable = true;
     extraConfig = {
       init.defaultBranch = "main";
       core = {
-	    editor = "vim";
+	      editor = "nvim";
         autocrlf = "input";
       };
       pull.rebase = true;
       rebase.autoStash = true;
+      rerere.enabled = true;
+      delta = {
+        navigate = true;
+        line-numbers = true;
+        side-by-side = true;
+      };
+      merge.conflictsyle = "diff3";
+      diff.colorMoved = "default";
+    };
+    aliases = {
+      a = "add .";
+      c = "commit";
+      ca = "commit -a";
+      cam = "commit -a --amend --no-edit";
+      f = "fetch";
+      pl = "pull";
+      p = "push";
+      pf = "push --force-with-lease origin";
+      update-last-commit = "!git commit -a --amend --no-edit && git push --force-with-lease origin";
     };
   };
 
   lazygit = {
     enable = true;
+    settings = {
+      os.editPreset = "nvim";
+      git.paging.pager = "delta --dark --paging=never";
+    };
   };
 
   vim = {
