@@ -121,6 +121,11 @@ let name = "Bassim Shahidy";
         src = lib.cleanSource ./config;
         file = "p10k.zsh";
       }
+      {
+        name = "fzf-git-sh";
+        src = pkgs.fzf-git-sh;
+        file = "share/fzf-git-sh/fzf-git.sh";
+      }
     ];
     initExtraFirst = ''
       if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
