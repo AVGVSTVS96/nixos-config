@@ -111,16 +111,16 @@ let name = "Bassim Shahidy";
       alias lsp="fd --max-depth 1 --hidden --follow --exclude .git | fzf --preview '$show_file_or_dir_preview'"
     '';
     plugins = [
-      {
-        name = "powerlevel10k";
-        src = pkgs.zsh-powerlevel10k;
-        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-      }
-      {
-        name = "powerlevel10k-config";
-        src = lib.cleanSource ./config;
-        file = "p10k.zsh";
-      }
+      # {
+      #   name = "powerlevel10k";
+      #   src = pkgs.zsh-powerlevel10k;
+      #   file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      # }
+      # {
+      #   name = "powerlevel10k-config";
+      #   src = lib.cleanSource ./config;
+      #   file = "p10k.zsh";
+      # }
       {
         name = "fzf-git-sh";
         src = pkgs.fzf-git-sh;
@@ -141,6 +141,12 @@ let name = "Bassim Shahidy";
       # Remove history data we don't want to see
       export HISTIGNORE="pwd:ls:cd"
     '';
+  };
+
+  oh-my-posh = {
+    enable = true;
+    enableZshIntegration = true;
+    useTheme = "tokyonight_storm";
   };
 
   git = {
