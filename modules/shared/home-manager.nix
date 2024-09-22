@@ -163,9 +163,7 @@ let name = "Bassim Shahidy";
     ignores = [ "*.swp" ];
     userName = name;
     userEmail = email;
-    lfs = {
-      enable = true;
-    };
+    lfs.enable = true;
     # setting `delta.enable = true;` sets 
     #   `core.pager = "delta"` and
     #   `interactive.diffFilter = "delta --color-only";`
@@ -198,6 +196,14 @@ let name = "Bassim Shahidy";
       p = "push";
       pf = "push --force-with-lease origin";
       update-last-commit = "!git commit -a --amend --no-edit && git push --force-with-lease origin";
+    };
+  };
+
+  gh = {
+      enable = true;
+      gitCredentialHelper = {
+        enable = true;
+        hosts = ["https://github.com" "https://gist.github.com"];
     };
   };
 
