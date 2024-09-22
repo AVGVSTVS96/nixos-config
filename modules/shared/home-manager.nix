@@ -168,6 +168,10 @@ let name = "Bassim Shahidy";
     ignores = [ "*.swp" ];
     userName = name;
     userEmail = email;
+    signing = { 
+      key = "~/.ssh/id_github";
+      signByDefault = true;
+    };
     lfs.enable = true;
     # setting `delta.enable = true;` sets 
     #   `core.pager = "delta"` and
@@ -175,6 +179,7 @@ let name = "Bassim Shahidy";
     # by default, so they don't need to be set manually
     delta.enable = true;
     extraConfig = {
+      gpg.format = "ssh";
       init.defaultBranch = "main";
       core = {
 	      editor = "nvim";
@@ -418,6 +423,7 @@ let name = "Bassim Shahidy";
         ];
       };
     };
+    addKeysToAgent = "yes";
   };
 
   tmux = {
