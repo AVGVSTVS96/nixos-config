@@ -140,26 +140,6 @@ let name = "Bassim Shahidy";
 
       # Remove history data we don't want to see
       export HISTIGNORE="pwd:ls:cd"
-
-      # Emacs is my editor
-      export ALTERNATE_EDITOR=""
-      export EDITOR="emacsclient -t"
-      export VISUAL="emacsclient -c -a emacs"
-
-      e() {
-          emacsclient -t "$@"
-      }
-
-      # nix shortcuts
-      shell() {
-          nix-shell '<nixpkgs>' -A "$1"
-      }
-
-      # Use difftastic, syntax-aware diffing
-      alias diff=difft
-
-      # Always color ls and group directories
-      alias ls='ls --color=auto'
     '';
   };
 
@@ -343,11 +323,18 @@ let name = "Bassim Shahidy";
       };
 
       window = {
-        opacity = 0.90;
-        # padding = {
-        #   x = 14;
-        #   y = 14;
-        # };
+        opacity = 0.50;
+        blur = true;
+        padding = {
+          x = 8;
+          y = 8;
+        };
+        dynamic_padding = true;
+        title = "Terminal";
+        class = {
+          instance = "Alacritty";
+          general = "Alacritty";
+        };
       };
 
       font = {
@@ -361,42 +348,35 @@ let name = "Bassim Shahidy";
         ];
       };
 
-      # dynamic_padding = true;
-      # decorations = "full";
-      # title = "Terminal";
-      # class = {
-      #   instance = "Alacritty";
-      #   general = "Alacritty";
-      # };
 
-      # colors = {
-      #   primary = {
-      #     background = "0x1f2528";
-      #     foreground = "0xc0c5ce";
-      #   };
+      colors = {
+        primary = {
+          background = "0x1f2528";
+          foreground = "0xc0c5ce";
+        };
 
-      #   normal = {
-      #     black = "0x1f2528";
-      #     red = "0xec5f67";
-      #     green = "0x99c794";
-      #     yellow = "0xfac863";
-      #     blue = "0x6699cc";
-      #     magenta = "0xc594c5";
-      #     cyan = "0x5fb3b3";
-      #     white = "0xc0c5ce";
-      #   };
+        normal = {
+          black = "0x1f2528";
+          red = "0xec5f67";
+          green = "0x99c794";
+          yellow = "0xfac863";
+          blue = "0x6699cc";
+          magenta = "0xc594c5";
+          cyan = "0x5fb3b3";
+          white = "0xc0c5ce";
+        };
 
-      #   bright = {
-      #     black = "0x65737e";
-      #     red = "0xec5f67";
-      #     green = "0x99c794";
-      #     yellow = "0xfac863";
-      #     blue = "0x6699cc";
-      #     magenta = "0xc594c5";
-      #     cyan = "0x5fb3b3";
-      #     white = "0xd8dee9";
-      #   };
-      # };
+        bright = {
+          black = "0x65737e";
+          red = "0xec5f67";
+          green = "0x99c794";
+          yellow = "0xfac863";
+          blue = "0x6699cc";
+          magenta = "0xc594c5";
+          cyan = "0x5fb3b3";
+          white = "0xd8dee9";
+        };
+      };
     };
   };
 

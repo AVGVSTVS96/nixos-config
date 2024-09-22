@@ -6,16 +6,14 @@ with pkgs; [
   # aspell
   # aspellDicts.en
   bash-completion
-  # bat
-  # eza
-  # yazi
   # btop
   coreutils
   # killall
   fastfetch
   # openssh
   # sqlite
-  # wget
+  wget
+  nurl
   # zip
 
   # Encryption and security tools
@@ -32,7 +30,6 @@ with pkgs; [
   # emacs-all-the-icons-fonts
   # dejavu_fonts
   # ffmpeg
-  # fd
   font-awesome
   hack-font
   noto-fonts
