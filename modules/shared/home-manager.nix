@@ -38,6 +38,17 @@ let name = "Bassim Shahidy";
     };
   };
 
+  helix = {
+    enable = true;
+    settings = {
+      theme = "tokyonight";
+      editor = {
+        mouse = true;
+        cursorline = true;
+      };
+    };
+  };
+
   zoxide = {
     enable = true;
     enableZshIntegration = true;
