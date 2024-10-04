@@ -6,6 +6,7 @@ let name = "Bassim Shahidy";
 {
   # Shared shell configuration
   fd.enable = true;
+  bat.enable = true;
 
   fzf = {
     enable = true;
@@ -18,24 +19,6 @@ let name = "Bassim Shahidy";
     ];
     changeDirWidgetCommand = "fd --type d --hidden --strip-cwd-prefix --exclude .git";
     changeDirWidgetOptions = ["--preview 'eza --tree --color=always {} | head -200'"];
-  };
-
-  bat = {
-    enable = true;
-    themes = {
-      tokyo-night = {
-        src = pkgs.fetchFromGitHub {
-          owner = "folke";
-          repo = "tokyonight.nvim";
-          rev = "4b386e66a9599057587c30538d5e6192e3d1c181";
-          sha256 = "kxsNappeZSlUkPbxlgGZKKJGGZj2Ny0i2a+6G+8nH7s=";
-        };
-        file = "extras/sublime/tokyonight_night.tmTheme";
-      };
-    };
-    config = {
-      theme = "tokyo-night";
-    };
   };
 
   helix = {
@@ -122,16 +105,6 @@ let name = "Bassim Shahidy";
       alias lsp="fd --max-depth 1 --hidden --follow --exclude .git | fzf --preview '$show_file_or_dir_preview'"
     '';
     plugins = [
-      # {
-      #   name = "powerlevel10k";
-      #   src = pkgs.zsh-powerlevel10k;
-      #   file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-      # }
-      # {
-      #   name = "powerlevel10k-config";
-      #   src = lib.cleanSource ./config;
-      #   file = "p10k.zsh";
-      # }
       {
         name = "fzf-git-sh";
         src = pkgs.fzf-git-sh;
@@ -175,6 +148,11 @@ let name = "Bassim Shahidy";
     #   `interactive.diffFilter = "delta --color-only";`
     # by default, so they don't need to be set manually
     delta.enable = true;
+    delta.options = {
+      line-numbers = true;
+      side-by-side = true;
+      navigate = true;
+    };
     extraConfig = {
       gpg.format = "ssh";
       init.defaultBranch = "main";
@@ -185,11 +163,6 @@ let name = "Bassim Shahidy";
       pull.rebase = true;
       rebase.autoStash = true;
       rerere.enabled = true;
-      delta = {
-        navigate = true;
-        line-numbers = true;
-        side-by-side = true;
-      };
       merge.conflictsyle = "diff3";
       diff.colorMoved = "default";
     };

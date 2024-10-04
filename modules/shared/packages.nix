@@ -14,6 +14,8 @@ with pkgs; [
   # sqlite
   wget
   nurl
+  nil
+  alejandra
   # zip
 
   # Encryption and security tools

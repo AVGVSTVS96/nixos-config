@@ -55,6 +55,7 @@ let user = "bassim-nix"; in
     stateVersion = 4;
 
     defaults = {
+      screensaver.askForPassword = false;
       NSGlobalDomain = {
         AppleShowAllExtensions = true;
         ApplePressAndHoldEnabled = false;

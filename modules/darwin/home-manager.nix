@@ -1,4 +1,4 @@
-{ config, pkgs, lib, home-manager, ... }:
+{ config, pkgs, lib, home-manager, tokyonight, ... }:
 
 let
   user = "bassim-nix";
@@ -58,6 +58,11 @@ in
         ];
         stateVersion = "23.11";
       };
+      imports = [
+        tokyonight.homeManagerModules.default
+      ];
+      tokyonight.enable = true;
+      tokyonight.style = "night";
       programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
       xdg.enable = true; 
       # Marked broken Oct 20, 2022 check later to remove this workaround
