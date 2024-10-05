@@ -1,6 +1,10 @@
 { pkgs, config, ... }:
 
 {
+  ".config/lvim/config.lua" = {
+    source = ./config/lvim/config.lua;
+  };
+
   # Initializes Emacs with org-mode so we can tangle the main config
   # ".emacs.d/init.el" = {
   #   text = builtins.readFile ../shared/config/emacs/init.el;
@@ -16,4 +20,5 @@
   #     };
   #     recursive = true;
   #   };
+  # config.lua fiole for lvim config written in nix 
 }
