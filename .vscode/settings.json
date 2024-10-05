@@ -1,0 +1,27 @@
+{
+    "Lua": {
+        "runtime": {
+          "version": "LuaJIT",
+          "path": [
+            "lua/?.lua",
+            "lua/?/init.lua",
+            "?.lua",
+            "?/init.lua"
+          ]
+        },
+        "diagnostics": {
+          "globals": ["vim", "lvim", "reload"]
+        },
+        "workspace": {
+          "library": [
+            // find path and update for each machine
+            "/nix/store/vvkd252c1f6nm281wnin5s3q04cb9rf5-lunarvim-1.4.0"
+          ],
+          "maxPreload": 2000,
+          "preloadFileSize": 500
+        },
+        "telemetry": {
+          "enable": false
+        }
+      }
+    }

@@ -21,16 +21,6 @@ lvim.plugins = {
   }
 }
 
-lvim.builtin.alpha.dashboard.section.buttons.entries = {
-  { "f", lvim.icons.ui.FindFile .. "  Find File",   "<CMD>Telescope find_files<CR>" },
-  { "n", lvim.icons.ui.NewFile .. "  New File",     "<CMD>ene!<CR>" },
-  { "p", lvim.icons.ui.Project .. "  Projects ",    "<CMD>Telescope projects<CR>" },
-  { "r", lvim.icons.ui.History .. "  Recent files", ":Telescope oldfiles <CR>" },
-  { "t", lvim.icons.ui.FindText .. "  Find Text",   "<CMD>Telescope live_grep<CR>" },
-  {
-    "c",
-    lvim.icons.ui.Gear .. "  Configuration",
-    "<CMD>edit ~/nixos-config/modules/shared/config/lvim/config.lua <CR>",
-  },
-  { "q", lvim.icons.ui.Close .. "  Quit", "<CMD>quit<CR>" },
-}
+-- Override Edit config.lua mappings in alpha and whichkey to nixos-config location
+lvim.builtin.which_key.mappings.L.c[1] = "<CMD>edit ~/nixos-config/modules/shared/config/lvim/config.lua <CR>"
+lvim.builtin.alpha.dashboard.section.buttons.entries[6][3] = "<CMD>edit ~/nixos-config/modules/shared/config/lvim/config.lua <CR>"
