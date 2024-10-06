@@ -2,15 +2,12 @@
 
 with pkgs; [
   # General packages for development and system management
-  alacritty
-  # aspell
-  # aspellDicts.en
+  # alacritty
   bash-completion
   # btop
   coreutils
-  # killall
   fastfetch
-  # openssh
+  openssh
   # sqlite
   wget
   nurl
@@ -39,26 +36,16 @@ with pkgs; [
   meslo-lgs-nf
 
   # Node.js development tools
-  # nodePackages.npm # globally install npm
-  # nodePackages.prettier
-  # nodejs
+  nodePackages.npm # globally install npm
+  nodePackages.prettier
+  nodejs
 
   # Text and terminal utilities
-  # htop
-  # hunspell
-  # iftop
   jetbrains-mono
   jq
   ripgrep
-  # tree
   tmux
+  lunarvim
   # unrar
   # unzip
-  zsh-powerlevel10k
-
-  lunarvim
-
-  # Python packages
-  # python39
-  # python39Packages.virtualenv # globally install virtualenv
 ]

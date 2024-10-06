@@ -76,7 +76,6 @@ in
   local.dock.enable = true;
   local.dock.entries = [
     { path = "/System/Applications/Launchpad.app"; } 
-    # { path = "/Applications/Visual Studio Code.app/"; }
     { path = "/Applications/Visual Studio Code - Insiders.app/"; }
     { path = "/Applications/Google Chrome.app/"; }
     { path = "/System/Applications/Messages.app/"; }
@@ -97,11 +96,6 @@ in
       path = "${config.users.users.${user}.home}/.local/share/";
       section = "others";
       options = "--sort name --view grid --display folder";
-    }
-    {
-      path = "${config.users.users.${user}.home}/.local/share/downloads";
-      section = "others";
-      options = "--sort name --view grid --display stack";
     }
     {
       path = "${config.users.users.${user}.home}/Downloads";

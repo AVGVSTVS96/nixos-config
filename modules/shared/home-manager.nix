@@ -52,7 +52,7 @@ let name = "Bassim Shahidy";
     settings = {
       manager = {
         show_hidden = true;
-        ratio = [ 1 2 5 ];
+        ratio = [ 1 3 4 ];
       };
     };
   };
@@ -124,6 +124,8 @@ let name = "Bassim Shahidy";
 
       # Remove history data we don't want to see
       export HISTIGNORE="pwd:ls:cd"
+
+      export EDITOR=nvim
     '';
   };
 
