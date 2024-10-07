@@ -2,7 +2,7 @@
 
 with pkgs; [
   # General packages for development and system management
-  # alacritty
+  alacritty
   bash-completion
   # btop
   coreutils
