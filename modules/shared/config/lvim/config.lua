@@ -4,14 +4,20 @@
 -- Forum: https://www.reddit.com/r/lunarvim/
 -- Discord: https://discord.com/invite/Xb9B4Ny
 
+-- Whichkey timeout
 vim.opt.timeoutlen = 50
 
+-- Allow capital Q to quit
+vim.cmd("command! Q q")
+
+-- Autosave
 vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
   pattern = { "*" },
   command = "silent! wall",
   nested = true,
 })
 
+-- Plugins
 lvim.plugins = {
   {
     "supermaven-inc/supermaven-nvim",
