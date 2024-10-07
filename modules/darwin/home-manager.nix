@@ -63,7 +63,13 @@ in
       ];
       tokyonight.enable = true;
       tokyonight.style = "night";
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
+      programs = {} 
+        // import ../shared/programs/tmux.nix { inherit config pkgs lib; }
+        // import ../shared/programs/zsh.nix { inherit config pkgs lib; }
+        // import ../shared/programs/alacritty.nix { inherit config pkgs lib; }
+        // import ../shared/programs/cli.nix { inherit config pkgs lib; }
+        // import ../shared/programs/git.nix { inherit config pkgs lib; }
+        // import ../shared/programs/editors.nix { inherit config pkgs lib; };
       xdg.enable = true; 
       # Marked broken Oct 20, 2022 check later to remove this workaround
       # https://github.com/nix-community/home-manager/issues/3344

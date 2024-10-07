@@ -3,7 +3,7 @@
 let
   user = "bassim-nix";
   xdg_configHome  = "/home/${user}/.config";
-  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
+  # shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
   shared-files = import ../shared/files.nix { inherit config pkgs; };
 
   polybar-user_modules = builtins.readFile (pkgs.substituteAll {
@@ -114,6 +114,12 @@ in
     };
   };
 
-  programs = shared-programs // {};
-
+  # programs = shared-programs // {};
+  programs = {} 
+    // import ../shared/programs/tmux.nix { inherit config pkgs lib; }
+    // import ../shared/programs/zsh.nix { inherit config pkgs lib; }
+    // import ../shared/programs/alacritty.nix { inherit config pkgs lib; }
+    // import ../shared/programs/cli.nix { inherit config pkgs lib; }
+    // import ../shared/programs/git.nix { inherit config pkgs lib; }
+    // import ../shared/programs/editors.nix { inherit config pkgs lib; };
 }
