@@ -34,6 +34,7 @@ with pkgs; [
   noto-fonts
   noto-fonts-emoji
   meslo-lgs-nf
+  (pkgs.nerdfonts.override { fonts = [ "Monaspace"]; })
 
   # Node.js development tools
   nodePackages.npm # globally install npm
