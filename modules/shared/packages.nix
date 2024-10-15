@@ -14,7 +14,7 @@ with pkgs; [
   nil
   alejandra
   # zip
-
+  neovim
   # Encryption and security tools
   age
   age-plugin-yubikey

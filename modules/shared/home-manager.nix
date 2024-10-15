@@ -22,7 +22,7 @@ let name = "Bassim Shahidy";
       cl = "clear";
       yz = "yazi";
       lg = "lazygit";
-      nvim = "lvim";
+      # nvim = "lvim";
       # Nix aliases
       nixswitch = "git add . && nix run .#build-switch";
       nixbuild = "nix run .#build";
@@ -313,6 +313,7 @@ let name = "Bassim Shahidy";
   # --------------------------
   # -- Editor configuration --
   # --------------------------
+
   helix = {
     enable = true;
     settings = {
