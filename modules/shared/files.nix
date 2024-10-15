@@ -1,9 +1,17 @@
 { pkgs, config, ... }:
 
 {
-  ".config/lvim/config.lua" = {
-    source = ./config/lvim/config.lua;
+  xdg.configFile = {
+    "nvim" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/shared/config/nvim";
+      recursive = true;
+    };
+
+    "lvim/config.lua" = {
+      source = ./config/lvim/config.lua;
+    };
   };
+}
 
   # Initializes Emacs with org-mode so we can tangle the main config
   # ".emacs.d/init.el" = {
@@ -15,10 +23,8 @@
   #     source = pkgs.fetchFromGitHub {
   #       owner = "BennyOe";
   #       repo = "tokyo-night.yazi";
-  #       rev = "main"; # Consider using a specific commit hash for stability
+  #       rev = "main";
   #       sha256 = "112r9b7gan3y4shm0dfgbbgnxasi7ywlbk1pksdbpaglkczv0412";
   #     };
   #     recursive = true;
   #   };
-  # config.lua fiole for lvim config written in nix 
-}

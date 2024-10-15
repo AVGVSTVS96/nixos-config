@@ -4,7 +4,6 @@ let
   user = "bassim-nix";
   xdg_configHome  = "/home/${user}/.config";
   shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
-  shared-files = import ../shared/files.nix { inherit config pkgs; };
 
   polybar-user_modules = builtins.readFile (pkgs.substituteAll {
     src = ./config/polybar/user_modules.ini;
@@ -27,12 +26,15 @@ let
 
 in
 {
+  imports = [
+    ../shared/files.nix
+    ./files.nix
+  ];
   home = {
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
     packages = pkgs.callPackage ./packages.nix {};
-    file = shared-files // import ./files.nix { inherit user; };
     stateVersion = "21.05";
   };
 
