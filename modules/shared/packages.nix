@@ -21,6 +21,7 @@ with pkgs; [
   gnupg
   libfido2
 
+  gh
   # Cloud-related tools and SDKs
   # docker
   # docker-compose
