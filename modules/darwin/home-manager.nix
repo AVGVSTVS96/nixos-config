@@ -78,10 +78,6 @@ in
     { path = "/System/Applications/Utilities/Terminal.app/"; }
     { path = "/System/Applications/Utilities/Activity Monitor.app/"; }
     { path = "/System/Applications/System Settings.app/"; }
-    # {
-    #   path = toString myEmacsLauncher;
-    #   section = "others";
-    # }
     {
       path = "${config.users.users.${user}.home}/.local/share/";
       section = "others";
