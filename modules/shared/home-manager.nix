@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 let name = "Bassim Shahidy";
     user = "bassim-nix";
@@ -320,7 +320,47 @@ let name = "Bassim Shahidy";
       theme = "tokyonight";
       editor = {
         mouse = true;
+        line-number = "absolute";
         cursorline = true;
+        auto-completion = true;
+        auto-format = true;
+        auto-info = true;
+        color-modes = true;
+        auto-pairs = true;
+        gutters = ["diff" "diagnostics" "line-numbers" "spacer"];
+        middle-click-paste = true;
+
+        statusline = {
+          left = ["mode" "spinner"];
+          center = ["file-name"];
+          right = ["diagnostics" "selections" "position" "file-encoding" "file-line-ending" "file-type" "version-control"];
+          separator = "│";
+          mode = {
+            normal = "NORMAL";
+            insert = "INSERT";
+            select = "SELECT";
+          };
+        };
+
+        lsp = {
+          enable = true;
+          display-messages = true;
+          auto-signature-help = true;
+          display-inlay-hints = true;
+          display-signature-help-docs = true;
+          snippets = true;
+        };
+
+        whitespace = {
+          render = "all";
+          characters = {
+            space = "·";
+            nbsp = "⍽";
+            tab = "→";
+            newline = "⏎";
+            tabpad = "·";
+          };
+        };
       };
     };
   };
