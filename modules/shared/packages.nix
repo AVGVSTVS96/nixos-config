@@ -1,53 +1,52 @@
 { pkgs }:
 
 with pkgs; [
-  # General packages for development and system management
-  alacritty
-  bash-completion
-  # btop
-  coreutils
-  fastfetch
-  openssh
-  # sqlite
-  wget
-  nurl
-  nil
-  alejandra
-  # zip
-  neovim
-  # Encryption and security tools
-  age
-  age-plugin-yubikey
-  gnupg
-  libfido2
-
-  gh
-  # Cloud-related tools and SDKs
-  # docker
-  # docker-compose
-
-  # Media-related packages
-  # emacs-all-the-icons-fonts
-  # dejavu_fonts
-  # ffmpeg
-  font-awesome
-  hack-font
-  noto-fonts
-  noto-fonts-emoji
-  meslo-lgs-nf
-  (pkgs.nerdfonts.override { fonts = [ "Monaspace"]; })
-
-  # Node.js development tools
-  nodePackages.npm # globally install npm
-  nodePackages.prettier
-  nodejs
-
-  # Text and terminal utilities
-  jetbrains-mono
-  jq
-  ripgrep
-  tmux
-  lunarvim
-  # unrar
-  # unzip
 ]
+    # General packages for development and system management
+    alacritty
+    bash-completion
+    coreutils
+    fastfetch
+    openssh
+    wget
+
+    # Encryption and security tools
+    age
+    gnupg
+    # age-plugin-yubikey
+    # libfido2
+
+    # Media-related packages
+    # ffmpeg
+
+    # Fonts
+    # emacs-all-the-icons-fonts
+    # dejavu_fonts
+    font-awesome
+    hack-font
+    noto-fonts
+    noto-fonts-emoji
+    meslo-lgs-nf
+    jetbrains-mono
+    (pkgs.nerdfonts.override { fonts = [ "Monaspace" ]; })
+
+    # Git
+    gh
+
+    # Development tools
+    nodejs
+    nodePackages.npm
+    nodePackages.pnpm
+
+    cargo
+
+    # Nix Utils
+    nurl
+    nil
+
+    # Text and terminal utilities
+    jq
+    ripgrep
+    tmux
+    lunarvim
+    neovim

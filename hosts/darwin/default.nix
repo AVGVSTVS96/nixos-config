@@ -1,19 +1,17 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
-let user = "bassim-nix"; in
-
-{
-
+let 
+  user = "bassim-nix";
+in {
   imports = [
     ../../modules/darwin/home-manager.nix
-    ../../modules/shared
     ../../modules/shared/cachix
   ];
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
 
-  # Setup user, packages, programs
+  # Nix settings
   nix = {
     package = pkgs.nix;
     settings.trusted-users = [ "@admin" "${user}" ];
@@ -25,7 +23,6 @@ let user = "bassim-nix"; in
       options = "--delete-older-than 30d";
     };
 
-    # Turn this on to make command line easier
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -34,12 +31,9 @@ let user = "bassim-nix"; in
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
 
-  # Load configuration that is shared across systems
-  environment.systemPackages = with pkgs; [
-    # emacs-unstable
-  ] ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
+  environment.systemPackages = with pkgs; [ git ];
 
-
+  # MacOS settings
   system = {
     stateVersion = 4;
 
@@ -68,9 +62,7 @@ let user = "bassim-nix"; in
         tilesize = 48;
       };
 
-      finder = {
-        _FXShowPosixPathInTitle = false;
-      };
+      finder = { _FXShowPosixPathInTitle = false; };
 
       trackpad = {
         Clicking = true;
