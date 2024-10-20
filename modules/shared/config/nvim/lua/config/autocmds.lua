@@ -7,3 +7,5 @@
 --   command = "silent! wall",
 --   nested = true,
 -- })
+
+vim.cmd([[highlight WinSeparator guifg=#3C3F47]])
