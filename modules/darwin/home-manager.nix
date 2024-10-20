@@ -1,12 +1,10 @@
-{ config, pkgs, lib, home-manager, tokyonight, ... }:
+{ config, pkgs, tokyonight, ... }:
 
 let
   user = "bassim-nix";
 in
 {
-  imports = [
-   ./dock
-  ];
+  imports = [ ./dock ];
 
   # It me
   users.users.${user} = {
@@ -18,7 +16,7 @@ in
 
   homebrew = {
     enable = true;
-    casks = pkgs.callPackage ./casks.nix {};
+    casks = pkgs.callPackage ./casks.nix { };
     # onActivation.cleanup = "uninstall";
 
     # These app IDs are from using the mas CLI app
@@ -43,18 +41,17 @@ in
     users.${user} = { pkgs, config, lib, ... }:{
       home = {
         enableNixpkgsReleaseCheck = false;
-        packages = pkgs.callPackage ./packages.nix {};
         stateVersion = "23.11";
       };
       imports = [
         tokyonight.homeManagerModules.default
-        ../shared/files.nix
         ./files.nix
+        ./packages.nix
       ];
       tokyonight.enable = true;
       tokyonight.style = "night";
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
-      xdg.enable = true; 
+      programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib; };
+      xdg.enable = true;
       # Marked broken Oct 20, 2022 check later to remove this workaround
       # https://github.com/nix-community/home-manager/issues/3344
       # Sept 13, 2024 - This should be fine, no issues reported in last 1.5yrs
@@ -65,7 +62,7 @@ in
   # Fully declarative dock using the latest from Nix Store
   local.dock.enable = true;
   local.dock.entries = [
-    { path = "/System/Applications/Launchpad.app"; } 
+    { path = "/System/Applications/Launchpad.app"; }
     { path = "/Applications/Visual Studio Code - Insiders.app/"; }
     { path = "/Applications/Google Chrome.app/"; }
     { path = "/System/Applications/Messages.app/"; }
@@ -75,6 +72,7 @@ in
     { path = "/System/Applications/TV.app/"; }
     { path = "/System/Applications/Home.app/"; }
     { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
+    { path = "${pkgs.wezterm}/Applications/WezTerm.app/"; }
     { path = "/System/Applications/Utilities/Terminal.app/"; }
     { path = "/System/Applications/Utilities/Activity Monitor.app/"; }
     { path = "/System/Applications/System Settings.app/"; }

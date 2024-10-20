@@ -2,7 +2,7 @@
 
 let
   user = "bassim-nix";
-  xdg_configHome  = "/home/${user}/.config";
+  xdg_configHome = "/home/${user}/.config";
   shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
 
   polybar-user_modules = builtins.readFile (pkgs.substituteAll {
@@ -23,18 +23,14 @@ let
   polybar-modules = builtins.readFile ./config/polybar/modules.ini;
   polybar-bars = builtins.readFile ./config/polybar/bars.ini;
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
-
-in
+in 
 {
-  imports = [
-    ../shared/files.nix
-    ./files.nix
-  ];
+  imports = [ ./files.nix ];
   home = {
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-    packages = pkgs.callPackage ./packages.nix {};
+    packages = pkgs.callPackage ./packages.nix { };
     stateVersion = "21.05";
   };
 
@@ -92,7 +88,9 @@ in
           font = "Noto Sans";
           line_height = 4;
           markup = "full";
-          format = "<b>%s</b>\n%b";
+          format = ''
+            <b>%s</b>
+            %b'';
           alignment = "left";
           transparency = 10;
           show_age_threshold = 60;
@@ -116,6 +114,5 @@ in
     };
   };
 
-  programs = shared-programs // {};
-
+  programs = shared-programs // { };
 }

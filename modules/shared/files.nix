@@ -1,8 +1,10 @@
-{ pkgs, config, ... }:
+{ config, ... }:
 
 {
   xdg.configFile = {
     "nvim" = {
+      # mkOutOfStoreSymlink allows my nvim config to be symlinked directly from my nixos-config repo
+      # This makes it's config files writeable, allowing nvim to pick up changes without rebuilding nix
       source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/shared/config/nvim";
       recursive = true;
     };
@@ -12,19 +14,3 @@
     };
   };
 }
-
-  # Initializes Emacs with org-mode so we can tangle the main config
-  # ".emacs.d/init.el" = {
-  #   text = builtins.readFile ../shared/config/emacs/init.el;
-  # };
-  
-  # Symlink the Tokyo Night theme for Yazi into the correct directory
-  #   ".config/yazi/flavors/tokyo-night.yazi" = {
-  #     source = pkgs.fetchFromGitHub {
-  #       owner = "BennyOe";
-  #       repo = "tokyo-night.yazi";
-  #       rev = "main";
-  #       sha256 = "112r9b7gan3y4shm0dfgbbgnxasi7ywlbk1pksdbpaglkczv0412";
-  #     };
-  #     recursive = true;
-  #   };

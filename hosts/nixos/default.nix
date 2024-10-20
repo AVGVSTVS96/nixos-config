@@ -1,11 +1,11 @@
-{ config, inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 let user = "bassim-nix";
-    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
+    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; 
+in
 {
   imports = [
     ../../modules/nixos/disk-config.nix
-    ../../modules/shared
     ../../modules/shared/cachix
   ];
 
@@ -95,7 +95,6 @@ let user = "bassim-nix";
 
       # Better support for general peripherals
       libinput.enable = true;
-
     };
 
     # Let's be able to SSH into this machine
@@ -216,6 +215,7 @@ let user = "bassim-nix";
 
     gvfs.enable = true; # Mount, trash, and other functionalities
     tumbler.enable = true; # Thumbnail support for images
+  };
 
   # Enable sound
   # sound.enable = true;
@@ -230,7 +230,7 @@ let user = "bassim-nix";
     # hardware.xone.enable = true;
 
     # Crypto wallet support
-    ledger.enable = true;
+    # ledger.enable = true;
   };
 
 
@@ -289,5 +289,4 @@ let user = "bassim-nix";
   ];
 
   system.stateVersion = "21.05"; # Don't change this
-
 }
