@@ -25,12 +25,11 @@ let
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
 in 
 {
-  imports = [ ./files.nix ];
+  imports = [ ./files.nix ./packages.nix ];
   home = {
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-    packages = pkgs.callPackage ./packages.nix { };
     stateVersion = "21.05";
   };
 

@@ -1,9 +1,7 @@
-{ pkgs }:
-
-with pkgs;
-let shared-packages = import ../shared/packages.nix { inherit pkgs; }; in
-shared-packages ++ [
-
+{ pkgs, ... }:
+{ 
+ imports = [ ../shared/packages.nix ];
+ home.packages = with pkgs; [
   # Security and authentication
   yubikey-agent
   keepassxc
@@ -65,4 +63,5 @@ shared-packages ++ [
 
   # Music and entertainment
   spotify
-]
+ ];
+}
