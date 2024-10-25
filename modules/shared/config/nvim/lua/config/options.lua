@@ -3,5 +3,3 @@
 -- Add any additional options here
 
 vim.opt.listchars = "eol:↲,tab:|->,lead:·,space: ,extends:→,precedes:←,nbsp:␣"
-
-vim.cmd([[highlight WinSeparator guifg=#3C3F47]])
