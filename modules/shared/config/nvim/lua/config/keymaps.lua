@@ -27,4 +27,7 @@ map("n", "<C-y>", '"+y', { noremap = true, silent = true, desc = "Yank to system
 map("v", "<C-y>", '"+y', { noremap = true, silent = true, desc = "Yank to system register" })
 
 -- Map bufferline tab picker
-map("n", "<leader>bs", ":BufferLinePick<CR>", { silent = true, desc = "Pick buffer" })
+map("n", "<leader>bs", ":BufferLinePick<CR>", { silent = true, desc = "Quick Pick Buffers" })
+
+-- Map Telescope buffers
+map("n", "<leader>bt", ":Telescope buffers<CR>", { silent = true, desc = "Telescope Buffers" })
