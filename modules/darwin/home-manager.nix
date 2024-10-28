@@ -1,7 +1,7 @@
-{ config, pkgs, tokyonight, ... }:
+{ config, pkgs, tokyonight, variables, ... }:
 
 let
-  user = "bassim-nix";
+  user = variables.user;
 in
 {
   imports = [ ./dock ];
@@ -50,7 +50,7 @@ in
       ];
       tokyonight.enable = true;
       tokyonight.style = "night";
-      programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib; };
+      programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib variables; };
       xdg.enable = true;
       # Marked broken Oct 20, 2022 check later to remove this workaround
       # https://github.com/nix-community/home-manager/issues/3344

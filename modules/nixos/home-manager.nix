@@ -1,9 +1,9 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, variables, ... }:
 
 let
-  user = "bassim-nix";
+  user = variables.user;
   xdg_configHome = "/home/${user}/.config";
-  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
+  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib variables; };
 
   polybar-user_modules = builtins.readFile (pkgs.substituteAll {
     src = ./config/polybar/user_modules.ini;

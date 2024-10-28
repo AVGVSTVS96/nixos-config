@@ -1,12 +1,15 @@
-{ pkgs, ... }:
+{ pkgs, variables, ... }:
 
-let user = "bassim-nix";
+let 
+    user = variables.user;
+    hostname = variables.hostName.nixos;
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; 
 in
 {
   imports = [
     ../../modules/nixos/disk-config.nix
     ../../modules/shared/cachix
+    ../../modules/shared
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -32,7 +35,7 @@ in
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
-    hostName = "%HOST%"; # Define your hostname.
+    hostName = hostname; # Define your hostname.
     useDHCP = false;
     interfaces."%INTERFACE%".useDHCP = true;
   };

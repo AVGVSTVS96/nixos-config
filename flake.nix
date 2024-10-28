@@ -32,14 +32,19 @@
 
   outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight } @inputs:
     let
-      user = "bassim-nix";
+      variables = {
+        user = "bassim-nix";
+        email = "bassim101@gmail.com";
+        fullName = "Bassim Shahidy";
+        hostName.nixos = "nixos";
+      };
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
       devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
         default = with pkgs; mkShell {
           nativeBuildInputs = with pkgs; [ bashInteractive git ];
-          shellHook = with pkgs; ''
+          shellHook = ''
             export EDITOR=vim
           '';
         };
@@ -75,18 +80,16 @@
       devShells = forAllSystems devShell;
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system: let
-        user = "bassim-nix";
-      in
-        darwin.lib.darwinSystem {
+      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems 
+        (system: darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = inputs;
+          specialArgs = inputs // { inherit variables; };
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
               nix-homebrew = {
-                inherit user;
+                user = variables.user;
                 enable = true;
                 taps = {
                   "homebrew/homebrew-core" = homebrew-core;
@@ -104,14 +107,15 @@
 
       nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = inputs;
+        specialArgs = inputs // { inherit variables; };
         modules = [
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager {
             home-manager = {
+              extraSpecialArgs = { inherit variables; };
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.${user} = import ./modules/nixos/home-manager.nix;
+              users.${variables.user} = import ./modules/nixos/home-manager.nix;
             };
           }
           ./hosts/nixos

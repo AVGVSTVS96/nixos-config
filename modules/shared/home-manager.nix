@@ -1,8 +1,10 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, variables, ... }:
 
-let name = "Bassim Shahidy";
-    user = "bassim-nix";
-    email = "bassim101@gmail.com"; in
+let 
+  name = variables.fullName;
+  user = variables.user;
+  email = variables.email;
+in
 {
   # -----------------------
   # -- zsh configuration --

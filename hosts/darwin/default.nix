@@ -1,11 +1,13 @@
-{ pkgs, ... }:
+{ pkgs, variables, ... }:
 
 let 
-  user = "bassim-nix";
-in {
+  user = variables.user;
+in 
+  {
   imports = [
     ../../modules/darwin/home-manager.nix
     ../../modules/shared/cachix
+    ../../modules/shared
   ];
 
   # Auto upgrade nix package and the daemon service.
