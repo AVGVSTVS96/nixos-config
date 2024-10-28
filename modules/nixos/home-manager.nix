@@ -1,18 +1,19 @@
-{ config, pkgs, lib, variables, ... }:
+{ pkgs, variables, ... }:
 
 let
   user = variables.user;
   xdg_configHome = "/home/${user}/.config";
-  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib variables; };
 
-  polybar-user_modules = builtins.readFile (pkgs.substituteAll {
-    src = ./config/polybar/user_modules.ini;
-    packages = "${xdg_configHome}/polybar/bin/check-nixos-updates.sh";
-    searchpkgs = "${xdg_configHome}/polybar/bin/search-nixos-updates.sh";
-    launcher = "${xdg_configHome}/polybar/bin/launcher.sh";
-    powermenu = "${xdg_configHome}/rofi/bin/powermenu.sh";
-    calendar = "${xdg_configHome}/polybar/bin/popup-calendar.sh";
-  });
+  polybar-user_modules = builtins.readFile (
+    pkgs.substituteAll {
+      src = ./config/polybar/user_modules.ini;
+      packages = "${xdg_configHome}/polybar/bin/check-nixos-updates.sh";
+      searchpkgs = "${xdg_configHome}/polybar/bin/search-nixos-updates.sh";
+      launcher = "${xdg_configHome}/polybar/bin/launcher.sh";
+      powermenu = "${xdg_configHome}/rofi/bin/powermenu.sh";
+      calendar = "${xdg_configHome}/polybar/bin/popup-calendar.sh";
+    }
+  );
 
   polybar-config = pkgs.substituteAll {
     src = ./config/polybar/config.ini;
@@ -23,9 +24,14 @@ let
   polybar-modules = builtins.readFile ./config/polybar/modules.ini;
   polybar-bars = builtins.readFile ./config/polybar/bars.ini;
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
-in 
+in
 {
-  imports = [ ./files.nix ./packages.nix ];
+  imports = [
+    ./files.nix
+    ./packages.nix
+    ../shared/programs.nix
+  ];
+
   home = {
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
@@ -112,6 +118,4 @@ in
       };
     };
   };
-
-  programs = shared-programs // { };
 }

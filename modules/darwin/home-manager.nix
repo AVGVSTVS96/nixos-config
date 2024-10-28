@@ -37,26 +37,28 @@ in
 
   # Enable home-manager
   home-manager = {
+    extraSpecialArgs = { inherit variables; };
     useGlobalPkgs = true;
-    users.${user} = { pkgs, config, lib, ... }:{
-      home = {
-        enableNixpkgsReleaseCheck = false;
-        stateVersion = "23.11";
+    users.${user} =
+      { pkgs, config, lib, ... }: {
+        home = {
+          enableNixpkgsReleaseCheck = false;
+          stateVersion = "23.11";
+        };
+        imports = [
+          tokyonight.homeManagerModules.default
+          ./files.nix
+          ./packages.nix
+          ../shared/programs.nix
+        ];
+        tokyonight.enable = true;
+        tokyonight.style = "night";
+        xdg.enable = true;
+        # Marked broken Oct 20, 2022 check later to remove this workaround
+        # https://github.com/nix-community/home-manager/issues/3344
+        # Sept 13, 2024 - This should be fine, no issues reported in last 1.5yrs
+        # manual.manpages.enable = false;
       };
-      imports = [
-        tokyonight.homeManagerModules.default
-        ./files.nix
-        ./packages.nix
-      ];
-      tokyonight.enable = true;
-      tokyonight.style = "night";
-      programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib variables; };
-      xdg.enable = true;
-      # Marked broken Oct 20, 2022 check later to remove this workaround
-      # https://github.com/nix-community/home-manager/issues/3344
-      # Sept 13, 2024 - This should be fine, no issues reported in last 1.5yrs
-      # manual.manpages.enable = false;
-    };
   };
 
   # Fully declarative dock using the latest from Nix Store
