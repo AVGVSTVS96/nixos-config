@@ -42,6 +42,7 @@
     # Nix Utils
     nurl
     nil
+    nixfmt-rfc-style
 
     # Text and terminal utilities
     jq

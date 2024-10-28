@@ -1,7 +1,6 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
-
   nixpkgs = {
     config = {
       allowUnfree = true;
@@ -10,14 +9,18 @@
       allowUnsupportedSystem = true;
     };
 
-    overlays = ( 
+    overlays = (
       # Apply each overlay found in the /overlays directory
-      let path = ../../overlays; in with builtins;
-      map (n: import (path + ("/" + n)))
-          (filter (n: match ".*\\.nix" n != null ||
-                      pathExists (path + ("/" + n + "/default.nix")))
-                  (attrNames (readDir path)))
-      
+      let
+        path = ../../overlays;
+      in
+      with builtins;
+      map (n: import (path + ("/" + n))) (
+        filter (n: match ".*\\.nix" n != null || pathExists (path + ("/" + n + "/default.nix"))) (
+          attrNames (readDir path)
+        )
+      )
+
       # Example for getting overlay as tarball from github
       # ++ [(import (builtins.fetchTarball {
       #          url = "https://github.com/dustinlyons/emacs-overlay/archive/refs/heads/master.tar.gz";
