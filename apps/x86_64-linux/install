@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+set -eu
+
+# Colors for pretty output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CLEAR='\033[0m'
+
+# cleanup() {
+#   rm -rf nixos-config-main.zip nixos-config-main nixos-config
+# }
+
+# download_config() {
+#   echo -e "${BLUE}Downloading configuration...${CLEAR}"
+#   curl -LJ0 https://github.com/avgvstvs96/nixos-config/archive/main.zip -o nixos-config-main.zip
+#   unzip nixos-config-main.zip
+#   mv nixos-config-main nixos-config
+#   cd nixos-config
+# }
+
+# install_nixos() {
+#   echo -e "${BLUE}Installing NixOS for host $HOST...${CLEAR}"
+#   sudo nixos-install --flake ".#$HOST" $@
+#   sudo chmod -R 775 /mnt/etc/nixos
+# }
+
+cleanup() {
+  rm -rf nixos-config
+}
+
+check_installer() {
+  if [ -e /etc/NIXOS ]; then
+    echo -e "${GREEN}Running in the NixOS installer environment.${CLEAR}"
+  else
+    echo -e "${RED}Not running in the NixOS installer environment.${CLEAR}"
+    exit 1
+  fi
+}
+
+detect_architecture() {
+  ARCH=$(uname -m)
+  case "$ARCH" in
+  x86_64)
+    SYSTEM="x86_64"
+    ;;
+  aarch64)
+    SYSTEM="aarch64"
+    ;;
+  *)
+    echo -e "${RED}Unsupported architecture: $ARCH${CLEAR}"
+    exit 1
+    ;;
+  esac
+  echo -e "${GREEN}Detected system architecture: $SYSTEM${CLEAR}"
+}
+
+select_host() {
+  echo -e "${BLUE}Please select the host to install:${CLEAR}"
+  echo "1) nixos (standard installation)"
+  echo "2) vm (virtual machine installation)"
+
+  while true; do
+    read -p "Enter your choice (1 or 2): " choice
+    case "$choice" in
+    1)
+      HOST="nixos"
+      break
+      ;;
+    2)
+      HOST="vm"
+      break
+      ;;
+    *)
+      echo -e "${RED}Invalid choice. Please select 1 or 2.${CLEAR}"
+      ;;
+    esac
+  done
+
+  echo -e "${GREEN}Selected host: $HOST${CLEAR}"
+}
+
+clone_repo() {
+  echo -e "${BLUE}Cloning NixOS configuration repository...${CLEAR}"
+  git clone https://github.com/avgvstvs96/nixos-config.git
+  cd nixos-config
+}
+
+run_apply() {
+  echo -e "${BLUE}Running apply script...${CLEAR}"
+  ./apps/x86_64-linux/apply
+  if [ ! -f /tmp/username.txt ]; then
+    echo -e "${RED}Error: /tmp/username.txt does not exist.${CLEAR}"
+    exit 1
+  fi
+  export USERNAME=$(cat /tmp/username.txt)
+}
+
+# run_disko() {
+#   echo -e "${BLUE}Running disko for disk configuration...${CLEAR}"
+#   sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes \
+#     github:nix-community/disko -- --mode zap_create_mount ./modules/nixos/disk-config.nix
+# }
+
+setup_files() {
+  echo -e "${BLUE}Setting up configuration files...${CLEAR}"
+  sudo mkdir -p /mnt/etc/nixos
+  sudo cp -r * /mnt/etc/nixos
+  cd /mnt/etc/nixos
+}
+
+#
+# install_nixos() {
+#   TARGET="$HOST-$SYSTEM"
+#   echo -e "${BLUE}Installing NixOS with target $TARGET...${CLEAR}"
+#   sudo nixos-install --flake ".#$TARGET" $@
+#   sudo chmod -R 775 /mnt/etc/nixos
+# }
+
+disko_install_nixos() {
+  local disk_device="/dev/$BOOT_DISK"
+  echo -e "${BLUE}Installing NixOS for host $HOST on $SYSTEM disk $disk_device...${CLEAR}"
+
+  # Use disko-install, specify the disk as command line argument
+  sudo nix run github:nix-community/disko#disko-install -- \
+    --flake ".#$HOST-$SYSTEM" \
+    --disk main "$disk_device"
+
+  sudo chmod -R 775 /mnt/etc/nixos
+}
+
+prompt_reboot() {
+  read -p "Do you want to reboot now? (y/yes) " choice
+  case "$choice" in
+  y | Y | yes | YES)
+    echo -e "${GREEN}Rebooting...${CLEAR}"
+    sudo reboot
+    ;;
+  *)
+    echo -e "${YELLOW}Reboot skipped.${CLEAR}"
+    ;;
+  esac
+}
+
+cleanup
+check_installer
+detect_architecture
+select_host
+# download_config
+clone_repo
+run_apply
+run_disko
+setup_files
+# install_nixos "$@"
+disko_install_nixos
+cleanup
+prompt_reboot

@@ -1,21 +1,31 @@
 _: {
-  # This formats the disk with the ext4 filesystem
-  # Other examples found here: https://github.com/nix-community/disko/tree/master/example
+  # USAGE in your configuration.nix.
+  # Update devices to match your hardware.
+  # {
+  #  imports = [ ./disko-config.nix ];
+  #  disko.devices.disk.main.device = "/dev/sda";
+  # }
   disko.devices = {
     disk = {
-      vdb = {
-        device = "/dev/%DISK%";
+      main = {
         type = "disk";
+        # Device is overwritten with argument for disko-install in the install script
+        device = "/dev/disk/by-id/some-disk-id";
         content = {
           type = "gpt";
           partitions = {
+            boot = {
+              size = "1M";
+              type = "EF02"; # for grub MBR
+            };
             ESP = {
+              size = "1G";
               type = "EF00";
-              size = "100M";
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
               };
             };
             root = {

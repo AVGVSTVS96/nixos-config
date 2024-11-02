@@ -35,48 +35,32 @@ _prompt() {
   read -r $variable
 }
 
-ask_for_star() {
-  _print "${YELLOW}Would you like to support my work by starring my GitHub repo? yes/no [yes]: ${NC}"
-  local response
-  read -r response
-  response=${response:-yes} # Set default response to 'yes' if input is empty
-  if [[ "$response" =~ ^[Yy](es)?$ ]] || [[ -z "$response" ]]; then
-    if [[ "$OS" == "Darwin" ]]; then
-      open "https://github.com/dustinlyons/nixos-config"
-    else
-      xdg-open "https://github.com/dustinlyons/nixos-config"
-    fi
-  fi
-}
-
-ask_for_star
-
 # Fetch username from the system
 export USERNAME=$(whoami)
 
 # If the username is 'nixos' or 'root', ask the user for their username
-if [[ "$USERNAME" == "nixos" ]] || [[ "$USERNAME" == "root" ]]; then
-  _prompt "${YELLOW}You're running as $USERNAME. Please enter your desired username: ${NC}" USERNAME
-fi
+# if [[ "$USERNAME" == "nixos" ]] || [[ "$USERNAME" == "root" ]]; then
+#   _prompt "${YELLOW}You're running as $USERNAME. Please enter your desired username: ${NC}" USERNAME
+# fi
 
 # Check if git is available
-if command -v git >/dev/null 2>&1; then
-  # Fetch email and name from git config
-  export GIT_EMAIL=$(git config --get user.email)
-  export GIT_NAME=$(git config --get user.name)
-else
-  _print "${RED}Git is not available on this system.${NC}"
-fi
-
-# If git email is not found or git is not available, ask the user
-if [[ -z "$GIT_EMAIL" ]]; then
-  _prompt "${YELLOW}Please enter your email: ${NC}" GIT_EMAIL
-fi
-
-# If git name is not found or git is not available, ask the user
-if [[ -z "$GIT_NAME" ]]; then
-  _prompt "${YELLOW}Please enter your name: ${NC}" GIT_NAME
-fi
+# if command -v git >/dev/null 2>&1; then
+#   # Fetch email and name from git config
+#   export GIT_EMAIL=$(git config --get user.email)
+#   export GIT_NAME=$(git config --get user.name)
+# else
+#   _print "${RED}Git is not available on this system.${NC}"
+# fi
+#
+# # If git email is not found or git is not available, ask the user
+# if [[ -z "$GIT_EMAIL" ]]; then
+#   _prompt "${YELLOW}Please enter your email: ${NC}" GIT_EMAIL
+# fi
+#
+# # If git name is not found or git is not available, ask the user
+# if [[ -z "$GIT_NAME" ]]; then
+#   _prompt "${YELLOW}Please enter your name: ${NC}" GIT_NAME
+# fi
 
 select_boot_disk() {
   local disks
@@ -110,11 +94,11 @@ fi
 
 # Confirmation step
 confirm_details() {
-  _print "${GREEN}Username: $USERNAME"
-  _print "Email: $GIT_EMAIL"
-  _print "Name: $GIT_NAME${NC}"
+  # _print "${GREEN}Username: $USERNAME"
+  # _print "Email: $GIT_EMAIL"
+  # _print "Name: $GIT_NAME${NC}"
 
-  if([[ "$OS" != "Darwin" ]]); then
+  if ([[ "$OS" != "Darwin" ]]); then
     _print "${GREEN}Primary interface: $PRIMARY_IFACE"
     _print "Boot disk: $BOOT_DISK"
     _print "Hostname: $HOST_NAME${NC}"
@@ -123,17 +107,17 @@ confirm_details() {
   _prompt "${YELLOW}Is this correct? yes/no: ${NC}" choice
 
   case "$choice" in
-    [Nn] | [Nn][Oo] ) 
-      _print "${RED}Exiting script.${NC}" 
-      exit 1
-      ;;
-    [Yy] | [Yy][Ee][Ss] ) 
-      _print "${GREEN}Continuing...${NC}"
-      ;;
-    * ) 
-      _print "${RED}Invalid option. Exiting script.${NC}" 
-      exit 1
-      ;;
+  [Nn] | [Nn][Oo])
+    _print "${RED}Exiting script.${NC}"
+    exit 1
+    ;;
+  [Yy] | [Yy][Ee][Ss])
+    _print "${GREEN}Continuing...${NC}"
+    ;;
+  *)
+    _print "${RED}Invalid option. Exiting script.${NC}"
+    exit 1
+    ;;
   esac
 }
 
@@ -146,17 +130,17 @@ replace_tokens() {
   if [[ $(basename $1) != "apply" ]]; then
     if [[ "$OS" == "Darwin" ]]; then
       # macOS
-      LC_ALL=C LANG=C sed -i '' -e "s/%USER%/$USERNAME/g" "$file"
-      LC_ALL=C LANG=C sed -i '' -e "s/%EMAIL%/$GIT_EMAIL/g" "$file"
-      LC_ALL=C LANG=C sed -i '' -e "s/%NAME%/$GIT_NAME/g" "$file"
+      # LC_ALL=C LANG=C sed -i '' -e "s/%USER%/$USERNAME/g" "$file"
+      # LC_ALL=C LANG=C sed -i '' -e "s/%EMAIL%/$GIT_EMAIL/g" "$file"
+      # LC_ALL=C LANG=C sed -i '' -e "s/%NAME%/$GIT_NAME/g" "$file"
     else
       # Linux or other
-      sed -i -e "s/%USER%/$USERNAME/g" "$file"
-      sed -i -e "s/%EMAIL%/$GIT_EMAIL/g" "$file"
-      sed -i -e "s/%NAME%/$GIT_NAME/g" "$file"
+      # sed -i -e "s/%USER%/$USERNAME/g" "$file"
+      # sed -i -e "s/%EMAIL%/$GIT_EMAIL/g" "$file"
+      # sed -i -e "s/%NAME%/$GIT_NAME/g" "$file"
       sed -i -e "s/%INTERFACE%/$PRIMARY_IFACE/g" "$file"
       sed -i -e "s/%DISK%/$BOOT_DISK/g" "$file"
-      sed -i -e "s/%HOST%/$HOST_NAME/g" "$file"
+      # sed -i -e "s/%HOST%/$HOST_NAME/g" "$file"
     fi
   fi
 }
@@ -165,5 +149,5 @@ replace_tokens() {
 export -f replace_tokens
 find . -type f -exec bash -c 'replace_tokens "$0"' {} \;
 
-echo "$USERNAME" > /tmp/username.txt
+echo "$USERNAME" >/tmp/username.txt
 _print "${GREEN}User $USERNAME information applied.${NC}"

@@ -3,31 +3,25 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    
     home-manager.url = "github:nix-community/home-manager";
+    
+    darwin.url = "github:LnL7/nix-darwin/master";
+    darwin.inputs.nixpkgs.follows = "nixpkgs";
+    
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    homebrew-bundle.url = "github:homebrew/homebrew-bundle";
+    homebrew-bundle.flake = false;
+    homebrew-core.url = "github:homebrew/homebrew-core";
+    homebrew-core.flake = false;
+    homebrew-cask.url = "github:homebrew/homebrew-cask";
+    homebrew-cask.flake = false;
+    
     tokyonight.url = "github:mrjones2014/tokyonight.nix";
-    darwin = {
-      url = "github:LnL7/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
-    };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight } @inputs:
@@ -105,21 +99,103 @@
         }
       );
 
-      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = inputs // { inherit variables; };
-        modules = [
-          disko.nixosModules.disko
-          home-manager.nixosModules.home-manager {
-            home-manager = {
-              extraSpecialArgs = { inherit variables; };
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.${variables.user} = import ./modules/nixos/home-manager.nix;
-            };
-          }
-          ./hosts/nixos
-        ];
-     });
-  };
+      # nixosConfigurations = {
+      #   nixos = nixpkgs.lib.nixosSystem {
+      #     system = "x86_64-linux";
+      #     specialArgs = inputs // { inherit variables; };
+      #     modules = [
+      #       disko.nixosModules.disko
+      #       home-manager.nixosModules.home-manager {
+      #         home-manager = {
+      #           extraSpecialArgs = { inherit variables; };
+      #           useGlobalPkgs = true;
+      #           useUserPackages = true;
+      #           users.${variables.user} = import ./modules/nixos/home-manager.nix;
+      #         };
+      #       }
+      #       ./hosts/nixos
+      #     ];
+      #   };
+      #
+      #   vm = nixpkgs.lib.nixosSystem {
+      #     system = "x86_64-linux";
+      #     specialArgs = inputs // { inherit variables; };
+      #     modules = [
+      #       disko.nixosModules.disko
+      #       home-manager.nixosModules.home-manager {
+      #         home-manager = {
+      #           extraSpecialArgs = { inherit variables; };
+      #           useGlobalPkgs = true;
+      #           useUserPackages = true;
+      #           users.${variables.user} = import ./modules/nixos/home-manager.nix;
+      #         };
+      #       }
+      #       ./hosts/vm
+      #     ];
+      #   };
+      # };
+
+    #   nixosConfigurations = {
+    #   nixos = nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
+    #     inherit system;
+    #     specialArgs = inputs // { inherit variables; };
+    #     modules = [
+    #       disko.nixosModules.disko
+    #       home-manager.nixosModules.home-manager {
+    #         home-manager = {
+    #           extraSpecialArgs = { inherit variables; };
+    #           useGlobalPkgs = true;
+    #           useUserPackages = true;
+    #           users.${variables.user} = import ./modules/nixos/home-manager.nix;
+    #         };
+    #       }
+    #       ./hosts/nixos
+    #     ];
+    #   });
+    #
+    #   vm = nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
+    #     inherit system;
+    #     specialArgs = inputs // { inherit variables; };
+    #     modules = [
+    #       disko.nixosModules.disko
+    #       home-manager.nixosModules.home-manager {
+    #         home-manager = {
+    #           extraSpecialArgs = { inherit variables; };
+    #           useGlobalPkgs = true;
+    #           useUserPackages = true;
+    #           users.${variables.user} = import ./modules/nixos/home-manager.nix;
+    #         };
+    #       }
+    #       ./hosts/vm
+    #     ];
+    #   });
+    # };
+      
+    nixosConfigurations = 
+      let
+        mkHost = host: system: nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = inputs // { inherit variables; };
+          modules = [
+            disko.nixosModules.disko
+            home-manager.nixosModules.home-manager {
+              home-manager = {
+                extraSpecialArgs = { inherit variables; };
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.${variables.user} = import ./modules/nixos/home-manager.nix;
+              };
+            }
+            ./hosts/${host}
+          ];
+        };
+      in
+      {
+        "nixos-x86_64" = mkHost "nixos" "x86_64-linux";
+        "nixos-aarch64" = mkHost "nixos" "aarch64-linux";
+        "vm-x86_64" = mkHost "vm" "x86_64-linux";
+        "vm-aarch64" = mkHost "vm" "aarch64-linux";
+      };
+
+    };
 }
