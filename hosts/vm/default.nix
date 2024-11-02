@@ -2,7 +2,7 @@
 
 let
   user = variables.user;
-  hostName = variables.hostName.nixos;
+  hostName = variables.hostName.vm;
 in
 {
   imports = [

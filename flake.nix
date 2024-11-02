@@ -31,6 +31,7 @@
         email = "bassim101@gmail.com";
         fullName = "Bassim Shahidy";
         hostName.nixos = "nixos";
+        hostName.vm = "nixos-vm";
       };
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
