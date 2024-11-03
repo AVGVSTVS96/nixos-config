@@ -170,6 +170,7 @@ in
   environment.systemPackages = with pkgs; [
     gitAndTools.gitFull
     inetutils
+    spice-vdagent
     gnome-tweaks
   ];
 
