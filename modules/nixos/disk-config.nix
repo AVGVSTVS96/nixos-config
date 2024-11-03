@@ -10,7 +10,7 @@ _: {
       main = {
         type = "disk";
         # Device is overwritten with argument for disko-install in the install script
-        device = "/dev/disk/by-id/some-disk-id";
+        device = "/dev/%DISK%";
         content = {
           type = "gpt";
           partitions = {

@@ -8,6 +8,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CLEAR='\033[0m'
 
+export SYSTEM=""
+export HOST=""
+export PRIMARY_IFACE=""
+export BOOT_DISK=""
+
 # cleanup() {
 #   rm -rf nixos-config-main.zip nixos-config-main nixos-config
 # }
@@ -23,6 +28,36 @@ CLEAR='\033[0m'
 # install_nixos() {
 #   echo -e "${BLUE}Installing NixOS for host $HOST...${CLEAR}"
 #   sudo nixos-install --flake ".#$HOST" $@
+#   sudo chmod -R 775 /mnt/etc/nixos
+# }
+
+# run_disko() {
+#   echo -e "${BLUE}Running disko for disk configuration...${CLEAR}"
+#   sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes \
+#     github:nix-community/disko -- --mode zap_create_mount ./modules/nixos/disk-config.nix
+# }
+
+# run_apply() {
+#   echo -e "${BLUE}Running apply script...${CLEAR}"
+#   ./apps/x86_64-linux/apply
+#   if [ ! -f /tmp/username.txt ]; then
+#     echo -e "${RED}Error: /tmp/username.txt does not exist.${CLEAR}"
+#     exit 1
+#   fi
+#   export USERNAME=$(cat /tmp/username.txt)
+# }
+#
+
+# disko_install_nixos() {
+#   local disk_device="/dev/$BOOT_DISK"
+#   echo -e "${BLUE}Installing NixOS for host $HOST on $SYSTEM disk $disk_device...${CLEAR}"
+#
+#   # Use disko-install, specify the disk as command line argument
+#   sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes \
+#     github:nix-community/disko#disko-install -- \
+#     --flake ".#$HOST-$SYSTEM" \
+#     --disk main "$disk_device"
+#
 #   sudo chmod -R 775 /mnt/etc/nixos
 # }
 
@@ -43,10 +78,10 @@ detect_architecture() {
   ARCH=$(uname -m)
   case "$ARCH" in
   x86_64)
-    SYSTEM="x86_64"
+    export SYSTEM="x86_64"
     ;;
   aarch64)
-    SYSTEM="aarch64"
+    export SYSTEM="aarch64"
     ;;
   *)
     echo -e "${RED}Unsupported architecture: $ARCH${CLEAR}"
@@ -65,11 +100,11 @@ select_host() {
     read -p "Enter your choice (1 or 2): " choice
     case "$choice" in
     1)
-      HOST="nixos"
+      export HOST="nixos"
       break
       ;;
     2)
-      HOST="vm"
+      export HOST="vm"
       break
       ;;
     *)
@@ -77,8 +112,38 @@ select_host() {
       ;;
     esac
   done
-
   echo -e "${GREEN}Selected host: $HOST${CLEAR}"
+}
+
+detect_network_interface() {
+  export PRIMARY_IFACE=$(ip -o -4 route show to default | awk '{print $5}')
+  if [ -z "$PRIMARY_IFACE" ]; then
+    echo -e "${RED}Could not detect primary network interface${CLEAR}"
+    exit 1
+  fi
+  echo -e "${GREEN}Found primary network interface: $PRIMARY_IFACE${CLEAR}"
+}
+
+select_boot_disk() {
+  echo -e "${YELLOW}Available disks:${CLEAR}"
+  lsblk -nd --output NAME,SIZE | grep -v loop
+
+  echo -e "${RED}WARNING: All data on the chosen disk will be erased during the installation!${CLEAR}"
+
+  while true; do
+    read -p "Enter the name of your boot disk (e.g., sda, nvme0n1). Do not include '/dev/': " BOOT_DISK
+    if [ -b "/dev/$BOOT_DISK" ]; then
+      echo -e "${YELLOW}You have selected $BOOT_DISK as the boot disk. This will delete everything on this disk. Are you sure? (y/N): ${CLEAR}"
+      read -r confirmation
+      if [[ "$confirmation" =~ ^[Yy]$ ]]; then
+        export BOOT_DISK
+        echo -e "${GREEN}Selected boot disk: $BOOT_DISK${CLEAR}"
+        break
+      fi
+    else
+      echo -e "${RED}Invalid disk name. Please try again.${CLEAR}"
+    fi
+  done
 }
 
 clone_repo() {
@@ -87,46 +152,27 @@ clone_repo() {
   cd nixos-config
 }
 
-run_apply() {
-  echo -e "${BLUE}Running apply script...${CLEAR}"
-  ./apps/x86_64-linux/apply
-  if [ ! -f /tmp/username.txt ]; then
-    echo -e "${RED}Error: /tmp/username.txt does not exist.${CLEAR}"
-    exit 1
-  fi
-  export USERNAME=$(cat /tmp/username.txt)
+replace_tokens() {
+  find . -type f -exec sed -i -e "s/%INTERFACE%/$PRIMARY_IFACE/g" {} \;
+  find . -type f -exec sed -i -e "s/%DISK%/$BOOT_DISK/g" {} \;
 }
 
-# run_disko() {
-#   echo -e "${BLUE}Running disko for disk configuration...${CLEAR}"
-#   sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes \
-#     github:nix-community/disko -- --mode zap_create_mount ./modules/nixos/disk-config.nix
-# }
+run_disko() {
+  echo -e "${BLUE}Running disko for disk configuration...${CLEAR}"
+  sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes \
+    github:nix-community/disko -- --mode zap_create_mount ./modules/nixos/disk-config.nix
+}
 
-setup_files() {
+setup_configuration() {
   echo -e "${BLUE}Setting up configuration files...${CLEAR}"
   sudo mkdir -p /mnt/etc/nixos
   sudo cp -r * /mnt/etc/nixos
   cd /mnt/etc/nixos
 }
 
-#
-# install_nixos() {
-#   TARGET="$HOST-$SYSTEM"
-#   echo -e "${BLUE}Installing NixOS with target $TARGET...${CLEAR}"
-#   sudo nixos-install --flake ".#$TARGET" $@
-#   sudo chmod -R 775 /mnt/etc/nixos
-# }
-
-disko_install_nixos() {
-  local disk_device="/dev/$BOOT_DISK"
-  echo -e "${BLUE}Installing NixOS for host $HOST on $SYSTEM disk $disk_device...${CLEAR}"
-
-  # Use disko-install, specify the disk as command line argument
-  sudo nix run github:nix-community/disko#disko-install -- \
-    --flake ".#$HOST-$SYSTEM" \
-    --disk main "$disk_device"
-
+install_nixos() {
+  echo -e "${BLUE}Installing NixOS for host $HOST...${CLEAR}"
+  sudo nixos-install --flake ".#$HOST-$SYSTEM" $@
   sudo chmod -R 775 /mnt/etc/nixos
 }
 
@@ -143,16 +189,20 @@ prompt_reboot() {
   esac
 }
 
-cleanup
-check_installer
-detect_architecture
-select_host
-# download_config
-clone_repo
-run_apply
-run_disko
-setup_files
-# install_nixos "$@"
-disko_install_nixos
-cleanup
-prompt_reboot
+main() {
+  cleanup
+  check_installer
+  detect_architecture
+  select_host
+  detect_network_interface
+  select_boot_disk
+  clone_repo
+  replace_tokens
+  run_disko
+  setup_configuration
+  install_nixos
+  cleanup
+  prompt_reboot
+}
+
+main "$@"
