@@ -43,6 +43,7 @@
     nurl
     nil
     nixfmt-rfc-style
+    statix
 
     # Text and terminal utilities
     jq
