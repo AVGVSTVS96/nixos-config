@@ -1,15 +1,32 @@
 { pkgs, variables, ... }:
 
 let
-  user = variables.user;
+  inherit (variables) userName;
   hostName = variables.hostName.vm;
 in
 {
   imports = [
+    ../../modules/nixos/home-manager.nix
     ../../modules/nixos/disk-config.nix
     ../../modules/shared/cachix
     ../../modules/shared
   ];
+
+  users.users.${userName} = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel" # Enable ‘sudo’ for the user.
+      "docker"
+    ];
+    shell = pkgs.zsh;
+    # openssh.authorizedKeys.keys = keys;
+  };
+
+  # users.users.root = {
+  #   openssh.authorizedKeys.keys = keys;
+  # };
+
+  time.timeZone = "America/New_York";
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -20,6 +37,7 @@ in
       };
       efi.canTouchEfiVariables = true;
     };
+    kernelPackages = pkgs.linuxPackages_latest;
     initrd.availableKernelModules = [
       "xhci_pci"
       "ahci"
@@ -30,46 +48,30 @@ in
     ];
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
-    kernelPackages = pkgs.linuxPackages_latest;
     # kernelModules = [ "uinput" ];
   };
-
-  # Set your time zone.
-  time.timeZone = "America/New_York";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
-    hostName = hostName;
+    inherit hostName;
     useDHCP = false;
     interfaces."%INTERFACE%".useDHCP = true;
   };
 
-  # Turn on flag for proprietary software
-  nix = {
-    nixPath = [ "nixos-config=/home/${user}/.local/share/src/nixos-config:/etc/nixos" ];
-    settings.allowed-users = [ "${user}" ];
-    package = pkgs.nix;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-  };
-
   # Manages keys and such
   programs = {
+    zsh.enable = true;
     gnupg.agent.enable = true;
 
     # Needed for anything GTK related
     dconf.enable = true;
-
-    # My shell
-    zsh.enable = true;
   };
 
-  services.qemuGuest.enable = true;
-  services.spice-vdagentd.enable = true;
   services = {
+    qemuGuest.enable = true;
+    spice-vdagentd.enable = true;
     xserver = {
       enable = true;
       videoDrivers = [ "qxl" ];
@@ -88,33 +90,20 @@ in
     # printing.enable = true;
     # printing.drivers = [ pkgs.brlaser ]; # Brother printer driver
 
-    # Picom, my window compositor with fancy effects
-    #
-    # Notes on writing exclude rules:
-    #
-    #   class_g looks up index 1 in WM_CLASS value for an application
-    #   class_i looks up index 0
-    #
-    #   To find the value for a specific application, use `xprop` at the
-    #   terminal and then click on a window of the application in question
-    #
-
     gvfs.enable = true; # Mount, trash, and other functionalities
     tumbler.enable = true; # Thumbnail support for images
   };
 
-  # Enable sound
+  # Sound working in utm vm without this
   # sound.enable = true;
 
-  # Video support
-  hardware = {
-    graphics.enable = true;
-    # pulseaudio.enable = true;
-    # hardware.nvidia.modesetting.enable = true;
+  hardware.graphics.enable = true;
+  # hardware.pulseaudio.enable = true;
+  # hardware.nvidia.modesetting.enable = true;
 
-    # Enable Xbox support
-    # hardware.xone.enable = true;
-  };
+  # Enable Xbox support
+  # hardware.xone.enable = true;
+  
 
   # Add docker daemon
   # virtualisation = {
@@ -123,38 +112,16 @@ in
   #     logDriver = "json-file";
   #   };
   # };
-
-  # It's me, it's you, it's everyone
-  users.users = {
-    ${user} = {
-      isNormalUser = true;
-      extraGroups = [
-        "wheel" # Enable ‘sudo’ for the user.
-        "docker"
-      ];
-      shell = pkgs.zsh;
-      # openssh.authorizedKeys.keys = keys;
-    };
-
-    # root = {
-    #   openssh.authorizedKeys.keys = keys;
-    # };
-  };
-
   # Don't require password for users in `wheel` group for these commands
   security.sudo = {
     enable = true;
-    extraRules = [
-      {
-        commands = [
-          {
+    extraRules = [{
+        commands = [{
             command = "${pkgs.systemd}/bin/reboot";
             options = [ "NOPASSWD" ];
-          }
-        ];
+          }];
         groups = [ "wheel" ];
-      }
-    ];
+      }];
   };
 
   fonts.packages = with pkgs; [
