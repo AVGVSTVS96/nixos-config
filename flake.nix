@@ -30,9 +30,11 @@
         email = "bassim101@gmail.com";
         userName = "bassim-nix";
         fullName = "Bassim Shahidy";
-        hostName.nixos = "nixos";
-        hostName.vm = "nixos-vm";
-        hostName.darwin = "nixos-mac";
+        hostName = {
+          nixos = "nixos";
+          vm = "nixos-vm";
+          darwin = "nixos-mac";
+        };
       };
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
@@ -122,8 +124,8 @@
           "nixos-aarch64" = mkNixos "nixos" "aarch64-linux";
           "vm-x86_64" = mkNixos "vm" "x86_64-linux";
           "vm-aarch64" = mkNixos "vm" "aarch64-linux";
-          # "wsl-x86_64" = mkNixos "wsl" "x86_64-linux" ./modules/wsl/home-manager.nix;
-          # "wsl-aarch64" = mkNixos "wsl" "aarch64-linux" ./modules/wsl/home-manager.nix;
+          # "wsl-x86_64" = mkNixos "wsl" "x86_64-linux";
+          # "wsl-aarch64" = mkNixos "wsl" "aarch64-linux";
         };
     };
 }
