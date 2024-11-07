@@ -81,43 +81,29 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps
         // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems 
-        (system: darwin.lib.darwinSystem {
+      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
+        system: darwin.lib.darwinSystem {
           inherit system;
           specialArgs = { inherit variables inputs; };
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
-            {
-              # TODO: Move to dedicated homebrew module incl. casks
-              nix-homebrew = {
-                user = variables.userName;
-                enable = true;
-                taps = {
-                  "homebrew/homebrew-core" = homebrew-core;
-                  "homebrew/homebrew-cask" = homebrew-cask;
-                  "homebrew/homebrew-bundle" = homebrew-bundle;
-                };
-                mutableTaps = false;
-                autoMigrate = true;
-              };
-            }
             ./hosts/darwin
           ];
         }
-        );
+      );
 
       nixosConfigurations = 
         let
           mkNixos = host: system: nixpkgs.lib.nixosSystem {
-            inherit system;
-            specialArgs = { inherit variables inputs; };
-            modules = [
-              disko.nixosModules.disko
-              home-manager.nixosModules.home-manager 
-              ./hosts/${host}
-            ];
-          };
+              inherit system;
+              specialArgs = { inherit variables inputs; };
+              modules = [
+                disko.nixosModules.disko
+                home-manager.nixosModules.home-manager
+                ./hosts/${host}
+              ];
+            };
         in
           {
           "nixos-x86_64" = mkNixos "nixos" "x86_64-linux";

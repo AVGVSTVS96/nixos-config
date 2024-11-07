@@ -8,6 +8,7 @@ in
 {
   imports = [
     ../../modules/darwin/home-manager.nix
+    ../../modules/darwin/homebrew.nix
     ../../modules/shared/cachix
     ../../modules/shared
   ];
@@ -25,9 +26,8 @@ in
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
 
-  networking = {
-    inherit hostName localHostName;
-  };
+  # inherit sets options to the variable with the same name
+  networking = { inherit hostName localHostName; };
 
   environment.systemPackages = with pkgs; [ git ];
 
@@ -60,7 +60,9 @@ in
         tilesize = 48;
       };
 
-      finder = { _FXShowPosixPathInTitle = false; };
+      finder = {
+        _FXShowPosixPathInTitle = false;
+      };
 
       trackpad = {
         Clicking = true;
