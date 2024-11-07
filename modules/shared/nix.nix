@@ -9,20 +9,6 @@ in
     settings.allowed-users = [ "${userName}" ];
     settings.trusted-users = [ "@admin" "${userName}" ];
 
-    # gc = lib.mkMerge [
-    #   {
-    #     automatic = true;
-    #     options = "--delete-older-than 30d";
-    #   }
-    #   (lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-    #     user = "root";
-    #     interval = { Weekday = 0; Hour = 2; Minute = 0; };
-    #   })
-    #   (lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-    #     dates = "weekly";
-    #   })
-    # ];
-
     gc =
       {
         automatic = true;
