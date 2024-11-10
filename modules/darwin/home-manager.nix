@@ -6,16 +6,6 @@ in
 {
   imports = [ ./dock ];
 
-  # TODO: 
-  # Consider moving this to hosts/darwin/default.nix
-  # Look into diffences in options between darwin and nixos users.users
-  users.users.${userName} = {
-    name = "${userName}";
-    home = "/Users/${userName}";
-    isHidden = false;
-    shell = pkgs.zsh;
-  };
-
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
     useGlobalPkgs = true;

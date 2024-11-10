@@ -1,6 +1,7 @@
 { pkgs, variables, ... }:
 
 let
+  inherit (variables) userName;
   hostName = variables.hostName.darwin;
   localHostName = hostName;
 in
@@ -11,6 +12,13 @@ in
     ../../modules/shared/cachix
     ../../modules/shared
   ];
+
+  users.users.${userName} = {
+    name = "${userName}";
+    home = "/Users/${userName}";
+    isHidden = false;
+    shell = pkgs.zsh;
+  };
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
