@@ -10,10 +10,10 @@ FLAKE_SYSTEM="darwinConfigurations.${SYSTEM_TYPE}.system"
 
 export NIXPKGS_ALLOW_UNFREE=1
 
-echo "${YELLOW}Starting build...${NC}"
+echo "${YELLOW}Starting ${SYSTEM_TYPE} build...${NC}"
 nix --extra-experimental-features 'nix-command flakes' build .#$FLAKE_SYSTEM $@
 
 echo "${YELLOW}Cleaning up...${NC}"
 unlink ./result
 
-echo "${GREEN}Switch to new generation complete!${NC}"
+echo "${GREEN}Build completed successfully!${NC}"
