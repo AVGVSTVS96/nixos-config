@@ -6,34 +6,6 @@ in
 {
   imports = [ ./dock ];
 
-  # TODO: 
-  # Consider moving this to hosts/darwin/default.nix
-  # Look into diffences in options between darwin and nixos users.users
-  users.users.${userName} = {
-    name = "${userName}";
-    home = "/Users/${userName}";
-    isHidden = false;
-    shell = pkgs.zsh;
-  };
-
-  homebrew = {
-    enable = true;
-    casks = pkgs.callPackage ./casks.nix { };
-    # onActivation.cleanup = "uninstall";
-
-    # These app IDs are from using the mas CLI app
-    # $ nix shell nixpkgs#mas
-    # $ mas search <app name>
-    #
-    # If you have previously added these apps to your Mac App Store profile (but not installed them on this system),
-    # you may receive an error message "Redownload Unavailable with This Apple ID".
-    # This message is safe to ignore. (https://github.com/dustinlyons/nixos-config/issues/83)
-    # masApps = {
-    #   "1password" = 1333542190;
-    #   "wireguard" = 1451685025;
-    # };
-  };
-
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
     useGlobalPkgs = true;
