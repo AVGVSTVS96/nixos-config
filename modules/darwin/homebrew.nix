@@ -17,6 +17,15 @@ in
       enableZshIntegration = mkEnableOption "homebrew zsh integration" // {
         default = false;
       };
+      enableBashIntegration = mkEnableOption "homebrew bash integration" // {
+        default = false;
+      };
+      enableFishIntegration = mkEnableOption "homebrew fish integration" // {
+        default = false;
+      };
+      enableNushellIntegration = mkEnableOption "homebrew nushell integration" // {
+        default = false;
+      };
     };
   };
 
@@ -40,6 +49,22 @@ in
     home-manager.users.${userName}.programs = {
       zsh.initExtra = mkIf cfg.enableZshIntegration ''
         eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
+      '';
+
+      bash.initExtra = mkIf cfg.enableBashIntegration ''
+        eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
+      '';
+
+      fish.interactiveShellInit = mkIf cfg.enableFishIntegration ''
+        eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
+      '';
+
+      # https://www.nushell.sh/book/configuration.html#homebrew
+      # https://reimbar.org/dev/nushell/
+      nushell.extraEnv = mkIf cfg.enableFishIntegration ''
+        # $env.PATH = ($env.PATH | split row (char esep) | prepend '/opt/homebrew/bin') 
+        use std "path add"
+        path add /opt/homebrew/bin
       '';
     };
 
