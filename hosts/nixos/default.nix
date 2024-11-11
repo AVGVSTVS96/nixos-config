@@ -12,13 +12,15 @@ in
     ../../modules/shared
   ];
 
+  shells.zsh.enable = true;
+  shells.fish.enable = false;
+
   users.users.${userName} = {
     isNormalUser = true;
     extraGroups = [
       "wheel" # Enable ‘sudo’ for the user.
       "docker"
     ];
-    shell = pkgs.zsh;
     # openssh.authorizedKeys.keys = keys;
   };
 
