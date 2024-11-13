@@ -34,8 +34,6 @@ in
       shellAliases = {
         # General aliases
         g   = "git";
-        zrc = "nvim ~/.zshrc";
-        szrc = "source ~/.zshrc";
         exz = "exec zsh";
         cl  = "clear";
         yz  = "yazi";
@@ -93,8 +91,6 @@ in
 
         # Remove history data we don't want to see
         export HISTIGNORE="pwd:ls:cd"
-
-        export EDITOR=nvim
       '';
     };
 

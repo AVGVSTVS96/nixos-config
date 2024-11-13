@@ -20,4 +20,9 @@
       description = "Currently active shell";
     };
   };
+
+  config = {
+    # TODO: Find a better place to put this
+    environment.variables.EDITOR = "nvim";
+  };
 }
