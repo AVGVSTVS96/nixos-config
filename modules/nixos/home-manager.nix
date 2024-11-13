@@ -1,32 +1,40 @@
-{ pkgs, variables, ... }:
+{ variables, inputs, ... }:
 
 let
-  user = variables.user;
+  inherit (variables) userName;
 in
 {
-  imports = [
-    ./files.nix
-    ./packages.nix
-    ../shared/programs.nix
-  ];
+  home-manager = {
+    extraSpecialArgs = { inherit variables inputs; };
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    users.${userName} =
+      { pkgs, config, lib, ... }: {
+        home = {
+          enableNixpkgsReleaseCheck = false;
+          username = "${userName}";
+          homeDirectory = "/home/${userName}";
+          stateVersion = "21.05";
+        };
 
-  home = {
-    enableNixpkgsReleaseCheck = false;
-    username = "${user}";
-    homeDirectory = "/home/${user}";
-    stateVersion = "21.05";
-  };
+        imports = [
+          ./files.nix
+          ./packages.nix
+          ../shared/programs.nix
+        ];
 
-  # Use a dark theme
-  gtk = {
-    enable = true;
-    iconTheme = {
-      name = "Adwaita-dark";
-      package = pkgs.adwaita-icon-theme;
-    };
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.adwaita-icon-theme;
-    };
+        # Use a dark theme
+        gtk = {
+          enable = true;
+          iconTheme = {
+            name = "Adwaita-dark";
+            package = pkgs.adwaita-icon-theme;
+          };
+          theme = {
+            name = "Adwaita-dark";
+            package = pkgs.adwaita-icon-theme;
+          };
+        };
+      };
   };
 }

@@ -1,95 +1,28 @@
-{ pkgs, lib, variables, ... }:
+{ pkgs, lib, variables, inputs, osConfig, ... }:
 
 let
-  name = variables.fullName;
-  user = variables.user;
-  email = variables.email;
+  inherit (variables) userName fullName email;
+
+  # osConfig allows us to access the top level nixos config,
+  # while config in this file would otherwise be home-manager's
+  #
+  # This makes shells.activeShell available, even though it's 
+  # defined and passed at the nix level, not directly to home-manager
+  isFish = osConfig.shells.activeShell == "fish";
+  isZsh = osConfig.shells.activeShell == "zsh";
 in
 {
+  imports = [
+    inputs.tokyonight.homeManagerModules.default
+  ];
+  tokyonight.enable = true;
+  tokyonight.style = "night";
+
   programs = {
-    # -----------------------
-    # -- zsh configuration --
-    # -----------------------
-    zsh = {
-      enable = true;
-      autocd = false;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
-      enableCompletion = true;
-      shellAliases = {
-        # General aliases
-        g = "git";
-        zrc = "nvim ~/.zshrc";
-        szrc = "source ~/.zshrc";
-        exz = "exec zsh";
-        cl = "clear";
-        yz = "yazi";
-        lg = "lazygit";
-        # Nix aliases
-        nixswitch = "git add . && nix run .#build-switch";
-        nixbuild = "git add . && nix run .#build";
-        ns = "nixswitch";
-        nb = "nixbuild";
-        # Eza aliases
-        l = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time";
-        la = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time --all";
-        ls = "l";
-        lsa = "la";
-        lsl = "eza --git --icons=always --color=always --long --no-user";
-        ll = "eza --git --icons=always --color=always --long --no-user -all";
-        lt = "eza --git --icons=always --color=always --long --no-user -all --tree --level=2";
-        lt2 = "eza --git --icons=always --color=always --long --no-user -all --tree --level=3";
-        lt3 = "eza --git --icons=always --color=always --long --no-user -all --tree --level=4";
-        ltg = "eza --git --icons=always --color=always --long --no-user --tree --git-ignore";
-      };
-      initExtra = ''
-        # Advanced customization of fzf options via _fzf_comprun function
-        _fzf_comprun() {
-          local command=$1
-          shift
-
-          case "$command" in
-            cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-            export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
-            ssh)          fzf --preview 'dig {}'                   "$@" ;;
-            *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
-          esac
-        }
-
-
-        # -- fzf with bat and eza previews --
-        show_file_or_dir_preview='if [ -d {} ]; then eza --tree --all --level=3 --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'
-        alias lspe="fzf --preview '$show_file_or_dir_preview'"
-        alias lsp="fd --max-depth 1 --hidden --follow --exclude .git | fzf --preview '$show_file_or_dir_preview'"
-      '';
-      plugins = [
-        {
-          name = "fzf-git-sh";
-          src = pkgs.fzf-git-sh;
-          file = "share/fzf-git-sh/fzf-git.sh";
-        }
-      ];
-      initExtraFirst = ''
-        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-        fi
-
-        # Define variables for directories
-        export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
-        export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
-        export PATH=$HOME/.local/share/bin:$PATH
-
-        # Remove history data we don't want to see
-        export HISTIGNORE="pwd:ls:cd"
-
-        export EDITOR=nvim
-      '';
-    };
-
     oh-my-posh = {
       enable = true;
-      enableZshIntegration = true;
+      enableZshIntegration = isZsh;
+      enableFishIntegration = isFish;
       useTheme = "tokyonight_storm";
     };
 
@@ -101,8 +34,8 @@ in
 
     fzf = {
       enable = true;
-      enableZshIntegration = true;
-      defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
+      enableZshIntegration = isZsh;
+      enableFishIntegration = isFish;
       defaultOptions = [
         "--height 40%"
         "--layout=reverse"
@@ -118,7 +51,8 @@ in
 
     zoxide = {
       enable = true;
-      enableZshIntegration = true;
+      enableZshIntegration = isZsh;
+      enableFishIntegration = isFish;
       options = [
         "--cmd cd"
       ];
@@ -127,20 +61,17 @@ in
     eza = {
       enable = true;
       git = true;
-      icons = true;
+      icons = "auto";
     };
 
     yazi = {
       enable = true;
-      enableZshIntegration = true;
+      enableZshIntegration = isZsh;
+      enableFishIntegration = isFish;
       settings = {
         manager = {
           show_hidden = true;
-          ratio = [
-            1
-            3
-            4
-          ];
+          ratio = [ 1 3 4 ];
         };
       };
     };
@@ -148,15 +79,15 @@ in
     ssh = {
       enable = true;
       includes = [
-        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
+        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/config_external")
+        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/config_external")
       ];
       matchBlocks = {
         "github.com" = {
           identitiesOnly = true;
           identityFile = [
-            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_github")
-            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_github")
+            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/id_github")
+            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/id_github")
           ];
         };
       };
@@ -253,7 +184,7 @@ in
     git = {
       enable = true;
       ignores = [ "*.swp" ];
-      userName = name;
+      userName = fullName;
       userEmail = email;
       signing = {
         key = "~/.ssh/id_github";
@@ -561,7 +492,7 @@ in
 
     wezterm = {
       enable = true;
-      enableZshIntegration = true;
+      enableZshIntegration = isZsh;
       extraConfig = ''
         local wezterm = require("wezterm")
 
