@@ -30,8 +30,6 @@ in
       shellAbbrs = {
         # General aliases
         g   = "git";
-        zrc = "nvim ~/.zshrc";
-        szrc = "source ~/.zshrc";
         exz = "exec zsh";
         cl  = "clear";
         yz  = "yazi";
