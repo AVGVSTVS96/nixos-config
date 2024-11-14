@@ -1,37 +1,33 @@
 { pkgs, variables, ... }:
 
-let 
-  user = variables.user;
-in 
-  {
+let
+  inherit (variables) userName;
+  hostName = variables.hostName.darwin;
+  localHostName = hostName;
+in
+{
   imports = [
     ../../modules/darwin/home-manager.nix
     ../../modules/shared/cachix
     ../../modules/shared
   ];
 
+  users.users.${userName} = {
+    name = "${userName}";
+    home = "/Users/${userName}";
+    isHidden = false;
+    shell = pkgs.zsh;
+  };
+
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
 
-  # Nix settings
-  nix = {
-    package = pkgs.nix;
-    settings.trusted-users = [ "@admin" "${user}" ];
-
-    gc = {
-      user = "root";
-      automatic = true;
-      interval = { Weekday = 0; Hour = 2; Minute = 0; };
-      options = "--delete-older-than 30d";
-    };
-
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-  };
-
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
+
+  networking = {
+    inherit hostName localHostName;
+  };
 
   environment.systemPackages = with pkgs; [ git ];
 

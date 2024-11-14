@@ -1,11 +1,15 @@
-{ pkgs, lib, variables, ... }:
+{ pkgs, lib, variables, inputs, ... }:
 
 let
-  name = variables.fullName;
-  user = variables.user;
-  email = variables.email;
+  inherit (variables) userName fullName email;
 in
 {
+  imports = [
+    inputs.tokyonight.homeManagerModules.default
+  ];
+  tokyonight.enable = true;
+  tokyonight.style = "night";
+
   programs = {
     # -----------------------
     # -- zsh configuration --
@@ -136,11 +140,7 @@ in
       settings = {
         manager = {
           show_hidden = true;
-          ratio = [
-            1
-            3
-            4
-          ];
+          ratio = [ 1 3 4 ];
         };
       };
     };
@@ -148,15 +148,15 @@ in
     ssh = {
       enable = true;
       includes = [
-        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
+        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/config_external")
+        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/config_external")
       ];
       matchBlocks = {
         "github.com" = {
           identitiesOnly = true;
           identityFile = [
-            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_github")
-            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_github")
+            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/id_github")
+            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/id_github")
           ];
         };
       };
@@ -253,7 +253,7 @@ in
     git = {
       enable = true;
       ignores = [ "*.swp" ];
-      userName = name;
+      userName = fullName;
       userEmail = email;
       signing = {
         key = "~/.ssh/id_github";
