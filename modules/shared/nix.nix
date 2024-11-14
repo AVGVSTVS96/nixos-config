@@ -1,4 +1,4 @@
-{ pkgs, variables, lib, ... }:
+{ pkgs, variables, lib, inputs, ... }:
 
 let
   inherit (variables) userName;
@@ -26,6 +26,8 @@ in
       experimental-features = nix-command flakes
     '';
   };
+
+  environment.systemPackages = with pkgs; [ inputs.ragenix.packages.${system}.ragenix ];
 
   nixpkgs = {
     config = {

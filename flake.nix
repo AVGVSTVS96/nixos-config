@@ -23,10 +23,13 @@
     homebrew-cask.url = "github:homebrew/homebrew-cask";
     homebrew-cask.flake = false;
 
+    ragenix.url = "github:yaxitech/ragenix";
+    ragenix.inputs.nixpkgs.follows = "nixpkgs";
+
     tokyonight.url = "github:mrjones2014/tokyonight.nix";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight, ragenix } @inputs:
     let
       variables = {
         email = "bassim101@gmail.com";
@@ -90,6 +93,7 @@
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
+            ragenix.nixosModules.default
             ./hosts/darwin
           ];
         }
@@ -103,6 +107,7 @@
               modules = [
                 disko.nixosModules.disko
                 home-manager.nixosModules.home-manager
+                ragenix.nixosModules.default
                 ./hosts/${host}
               ];
             };
