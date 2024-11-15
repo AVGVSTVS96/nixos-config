@@ -23,10 +23,13 @@
     homebrew-cask.url = "github:homebrew/homebrew-cask";
     homebrew-cask.flake = false;
 
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     tokyonight.url = "github:mrjones2014/tokyonight.nix";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight, sops-nix } @inputs:
     let
       variables = {
         email = "bassim101@gmail.com";
@@ -90,6 +93,7 @@
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
+            sops-nix.nixosModules.sops
             ./hosts/darwin
           ];
         }
@@ -98,14 +102,15 @@
       nixosConfigurations = 
         let
           mkNixos = host: system: nixpkgs.lib.nixosSystem {
-              inherit system;
-              specialArgs = { inherit variables inputs; };
-              modules = [
-                disko.nixosModules.disko
-                home-manager.nixosModules.home-manager
-                ./hosts/${host}
-              ];
-            };
+            inherit system;
+            specialArgs = { inherit variables inputs; };
+            modules = [
+              disko.nixosModules.disko
+              home-manager.nixosModules.home-manager
+              sops-nix.nixosModules.sops
+              ./hosts/${host}
+            ];
+          };
         in
           {
           "nixos-x86_64" = mkNixos "nixos" "x86_64-linux";
