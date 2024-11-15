@@ -3,6 +3,7 @@
 {
   imports = [
     ./nix.nix
+    ./secrets.nix
     ./shells/zsh.nix
     ./shells/fish.nix
   ];

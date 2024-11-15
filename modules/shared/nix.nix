@@ -1,20 +1,9 @@
-{ pkgs, variables, lib, inputs, ... }:
+{ pkgs, variables, lib, ... }:
 
 let
   inherit (variables) userName;
 in
 {
-  # TODO: Organize agenix stuff
-  age.secrets.primary = {
-    file = ../../secrets/primary.age;
-    owner = userName;
-    mode = "600";
-  };
-
-  home-manager.users.${variables.userName} = {
-    imports = [ inputs.ragenix.homeManagerModules.age ];
-  };
-
   nix = {
     package = pkgs.nix;
     settings.allowed-users = [ "${userName}" ];
@@ -37,8 +26,6 @@ in
       experimental-features = nix-command flakes
     '';
   };
-
-  environment.systemPackages = with pkgs; [ inputs.ragenix.packages.${system}.ragenix ];
 
   nixpkgs = {
     config = {
