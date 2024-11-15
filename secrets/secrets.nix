@@ -12,4 +12,5 @@ in
 {
   # Sets both keypairs to be able to decrypt the primary.age file
   "primary.age".publicKeys = hosts;
+  "graphite.age".publicKeys = hosts;
 }
