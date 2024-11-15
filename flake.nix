@@ -93,7 +93,7 @@
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
-            ragenix.nixosModules.default
+            ragenix.darwinModules.default
             ./hosts/darwin
           ];
         }

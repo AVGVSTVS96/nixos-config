@@ -2,6 +2,7 @@
 
 let
   inherit (variables) userName fullName email;
+  primaryKey = "/run/agenix/primary";
 
   # `osConfig` allows us to access the top level nixos `config`,
   # while `config` in this file would otherwise be home-manager's
@@ -84,10 +85,7 @@ in
       matchBlocks = {
         "github.com" = {
           identitiesOnly = true;
-          identityFile = [
-            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/id_github")
-            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/id_github")
-          ];
+          identityFile = [ primaryKey ];
         };
       };
       addKeysToAgent = "yes";
@@ -186,7 +184,7 @@ in
       userName = fullName;
       userEmail = email;
       signing = {
-        key = "~/.ssh/id_github";
+        key = primaryKey;
         signByDefault = true;
       };
       lfs.enable = true;
