@@ -1,16 +1,21 @@
-# These are the users and systems that will be able to decrypt 
-# the .age files later with their corresponding private keys
+# This file configures the rules for decrypting secrets
 #
-# In other words, users or systems with these corresponding 
-# private keys can access the decrypted secrets
+# NOTE:
+#  To rekey, we must pass an identity key location to agenix
+#  `agenix -r -i ~/.secrets/master.age.key`
+#
 let
   # These are the receipient (public) keys that are allowed to decrypt secrets
   darwin.ssh-host = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINExl/4Qo00yBDbmpb5MhWiQbCJvb31/TYSnyFFIupdp";
-  darwin.ssh-user.github = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHesT47TKuKLJjqf1XtJtCmYroSdkToQzWvhDgelIe8A";
-  hosts = [ darwin.ssh-host darwin.ssh-user.github ];
+  master.age = "age1zyeg7s2gwuvzxnd5qxtpx4kmyurm7fn550zjcfug8l3jlsg73qwq7va9pf";
+
+  masterKeys = [
+    darwin.ssh-host
+    master.age
+  ];
 in
 {
-  # Sets both keypairs to be able to decrypt the primary.age file
-  "primary.age".publicKeys = hosts;
-  "graphite.age".publicKeys = hosts;
+
+  "primary.age".publicKeys = masterKeys;
+  "graphite.age".publicKeys = masterKeys;
 }
