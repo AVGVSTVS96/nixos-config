@@ -2,13 +2,11 @@
 
 let
   inherit (variables) userName fullName email;
-  primaryKey = "/run/agenix/primary";
 
-  # `osConfig` allows us to access the top level nixos `config`,
-  # while `config` in this file would otherwise be home-manager's
-  #
-  # This makes shells.activeShell available, even though it's 
-  # defined and passed at the nix level, not directly to home-manager
+  # `osConfig` allows us to access nixos's `config` from home-manager
+  homeDir = osConfig.users.users.${userName}.home;
+  primaryKey = osConfig.age.secrets.primary.path;
+
   isFish = osConfig.shells.activeShell == "fish";
   isZsh = osConfig.shells.activeShell == "zsh";
 in
@@ -16,6 +14,7 @@ in
   imports = [
     inputs.tokyonight.homeManagerModules.default
   ];
+
   tokyonight.enable = true;
   tokyonight.style = "night";
 
