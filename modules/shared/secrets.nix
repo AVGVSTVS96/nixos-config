@@ -1,7 +1,6 @@
 { variables, inputs, pkgs, config, ... }:
 let
   inherit (variables) userName;
-  inherit (pkgs.stdenv.hostPlatform) isDarwin;
   homeDir = config.users.users.${userName}.home;
 in
   {
@@ -9,8 +8,13 @@ in
   # `config.age.secrets.<name>.path` or `/run/agenix/<name>`
 
   age = {
-    # This is the master key - it is used to decrypt all other keys
-    # This key is copied to the `.secrets` directory on the target system
+    # Path to find identity (private) keys used to decrypt secrets
+    # These correspond to recipient (public) keys in secrets.nix
+    # Defaults to ~/.ssh/id_ed25519, ~/.ssh/id_rsa
+    #
+    # NOTE: Use strings ("/path/to/id_rsa"), not nix paths (../path/to/id_rsa),
+    #       to avoid private keys being copied to the nix store
+    #
     identityPaths = [
       "/etc/ssh/ssh_host_ed25519_key"
       "${homeDir}/.secrets/master.age.key"
@@ -25,27 +29,32 @@ in
 
       graphite = {
         file = ../../secrets/graphite.age;
+        path = "${homeDir}/.config/graphite/user_config"; # decrypt secret to this location
+        owner = userName;
+        mode = "600";
+      };
 
-        # Path to place decrypted file
-        # This is necessary because there is no way to
-        # configure graphite in nixos, so we decrpyt and
-        # place the full file where graphite expects it
-        path = if isDarwin
-          then "${homeDir}/.config/graphite/user_config"
-          else "${homeDir}/.config/graphite/user_config";
+      anthropic = {
+        file = ../../secrets/anthropic.age;
+        owner = userName;
+        mode = "600";
+      };
+
+      openai = {
+        file = ../../secrets/openai.age;
         owner = userName;
         mode = "600";
       };
     };
   };
 
-
-  # Ensure ragenix is available in home-manager
-  home-manager.users.${variables.userName} = {
-    imports = [ inputs.ragenix.homeManagerModules.age ];
-  };
-
-  # Add ragenix cli to global system packages
+  # Add agenix cli
   environment.systemPackages = with pkgs; [
     inputs.ragenix.packages.${system}.ragenix
   ];
+
+  # NOTE: This may only be needed when defining secrets in home-manager
+  # home-manager.users.${userName} = {
+  #   imports = [ inputs.ragenix.homeManagerModules.age ];
+  # };
+}

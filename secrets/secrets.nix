@@ -15,7 +15,9 @@ let
   ];
 in
 {
-
+  # Encrypted secrets - decryptable by `masterKeys` defined above
   "primary.age".publicKeys = masterKeys;
   "graphite.age".publicKeys = masterKeys;
+  "anthropic.age".publicKeys = masterKeys;
+  "openai.age".publicKeys = masterKeys;
 }
