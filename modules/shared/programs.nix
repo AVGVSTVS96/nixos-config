@@ -80,10 +80,7 @@ in
 
     ssh = {
       enable = true;
-      includes = [
-        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/config_external")
-        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/config_external")
-      ];
+      includes = [ "${homeDir}/.ssh/config_external" ];
       matchBlocks = {
         "github.com" = {
           identitiesOnly = true;
