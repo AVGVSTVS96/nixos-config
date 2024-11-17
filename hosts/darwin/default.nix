@@ -13,11 +13,13 @@ in
     ../../modules/shared
   ];
 
+  shells.zsh.enable = true;
+  shells.fish.enable = false;
+
   users.users.${userName} = {
     name = "${userName}";
     home = "/Users/${userName}";
     isHidden = false;
-    shell = pkgs.zsh;
   };
 
   # Auto upgrade nix package and the daemon service.
