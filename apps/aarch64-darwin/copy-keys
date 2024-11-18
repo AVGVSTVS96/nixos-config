@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+username=${USER}
+export SECRETS_DIR=/Users/${username}/.secrets
+
+handle_no_usb() {
+  echo -e "${RED}No USB drive found or mounted.${NC}"
+  echo -e "${GREEN}Please ensure your USB drive with master.age.key is connected.${NC}"
+  exit 1
+}
+
+mount_usb() {
+  MOUNT_PATH=""
+  for dev in $(diskutil list | grep -o 'disk[0-9]'); do
+    MOUNT_PATH="$(diskutil info /dev/${dev} | grep \"Mount Point\" | awk -F: '{print $2}' | xargs)"
+    if [ -n "${MOUNT_PATH}" ]; then
+      echo -e "${GREEN}USB drive found at ${MOUNT_PATH}.${NC}"
+      break
+    fi
+  done
+
+  if [ -z "${MOUNT_PATH}" ]; then
+    echo -e "${RED}No USB drive found.${NC}"
+  fi
+}
+
+copy_key() {
+  if [ -n "${MOUNT_PATH}" ]; then
+    # Try root directory first, then keys/, then secrets/
+    if [ -f "${MOUNT_PATH}/master.age.key" ]; then
+      KEY_PATH="${MOUNT_PATH}/master.age.key"
+    elif [ -f "${MOUNT_PATH}/keys/master.age.key" ]; then
+      KEY_PATH="${MOUNT_PATH}/keys/master.age.key"
+    elif [ -f "${MOUNT_PATH}/secrets/master.age.key" ]; then
+      KEY_PATH="${MOUNT_PATH}/secrets/master.age.key"
+    else
+      echo -e "${RED}master.age.key not found in USB root, keys/, or secrets/ directories${NC}"
+      exit 1
+    fi
+
+    mkdir -p ${SECRETS_DIR}
+    cp "${KEY_PATH}" ${SECRETS_DIR}/
+    chmod 600 ${SECRETS_DIR}/master.age.key
+    chown ${username}:staff ${SECRETS_DIR}/master.age.key
+    echo -e "${GREEN}Successfully copied and configured master.age.key${NC}"
+  else
+    handle_no_usb
+  fi
+}
+
+mount_usb
+
+if [ -z "${MOUNT_PATH}" ]; then
+  handle_no_usb
+else
+  copy_key
+fi
