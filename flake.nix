@@ -52,16 +52,17 @@
           '';
         };
       };
-      mkApp = scriptName: system: {
+      mkApp = scriptName: system: let
+        scriptContent = builtins.readFile (./. + "/apps/${system}/${scriptName}");
+      in {
         type = "app";
         program = "${
-          (nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-            #!/usr/bin/env bash
-            PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-            echo "Running ${scriptName} for ${system}"
-            exec ${self}/apps/${system}/${scriptName}
-          '')
-        }/bin/${scriptName}";
+        (nixpkgs.legacyPackages.${system}.writeShellApplication {
+          name = scriptName;
+          runtimeInputs = [ nixpkgs.legacyPackages.${system}.git ];
+          text = scriptContent;
+        })
+      }/bin/${scriptName}";
       };
       mkLinuxApps = system: {
         "apply" = mkApp "apply" system;
