@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m'
+RED="$(printf '\033[0;31m')"
+GREEN="$(printf '\033[0;32m')"
+NC="$(printf '\033[0m')"
 
 username=${USER}
 export SSH_DIR=/Users/${username}/.ssh

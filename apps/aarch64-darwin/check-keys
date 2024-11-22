@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
 set -e
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m'
+RED="$(printf '\033[0;31m')"
+GREEN="$(printf '\033[0;32m')"
+NC="$(printf '\033[0m')"
 
 username=${USER}
 export SECRETS_DIR=/Users/${username}/.secrets
+export SSH_DIR=/Users/${username}/.ssh
 
 lint_keys() {
-  if [[ -f "${SECRETS_DIR}/master.age.key" ]]; then
-    echo -e "${GREEN}All keys are present in ${SECRETS_DIR}.${NC}"
+  if [[ -f "${SECRETS_DIR}/master.age.key" && -f "${SSH_DIR}/id_ed25519" && -f "${SECRETS_DIR}/id_ed25519" ]]; then
+    echo -e "${GREEN}All keys are present!${NC}"
   else
-    echo -e "${RED}The age identity key is missing.${NC}"
+    echo -e "${RED}Unable to find any private keys.${NC}"
     if [[ ! -f "${SECRETS_DIR}/master.age.key" ]]; then
-      echo -e "${RED}Missing: master.age.key${NC}"
+      echo -e "${RED}Missing: ${SECRETS_DIR}/master.age.key${NC}"
     fi
-    echo -e "${GREEN}Run #copy-keys to copy the key from a USB drive, or #create-keys to create a new age identity key which you can then use to encrypt and decrypt new secrets.${NC}"
+    if [[ ! -f "${SECRETS_DIR}/id_ed25519" ]]; then
+      echo -e "${RED}Missing: ${SECRETS_DIR}/id_ed25519${NC}"
+    fi
+    if [[ ! -f "${SSH_DIR}/id_ed25519" ]]; then
+      echo -e "${RED}Missing: ${SSH_DIR}/id_ed25519${NC}"
+    fi
+    echo -e "${GREEN}Run #copy-keys to copy the key from a USB drive.${NC}"
     exit 1
   fi
 }
