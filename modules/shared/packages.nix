@@ -31,6 +31,7 @@
 
     # Git
     gh
+    graphite-cli
 
     # Development tools
     nodejs
