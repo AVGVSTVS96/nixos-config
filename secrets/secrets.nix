@@ -20,4 +20,5 @@ in
   "graphite.age".publicKeys = masterKeys;
   "anthropic.age".publicKeys = masterKeys;
   "openai.age".publicKeys = masterKeys;
+  "gmail.age".publicKeys = masterKeys;
 }

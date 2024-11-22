@@ -1,7 +1,7 @@
 { pkgs, lib, variables, inputs, osConfig, ... }:
 
 let
-  inherit (variables) userName fullName email;
+  inherit (variables) userName fullName;
 
   # `osConfig` allows us to access nixos's `config` from home-manager
   homeDir = osConfig.users.users.${userName}.home;
@@ -181,7 +181,9 @@ in
       enable = true;
       ignores = [ "*.swp" ];
       userName = fullName;
-      userEmail = email;
+      includes = [
+        { path = "./user_email"; }
+      ];
       signing = {
         key = primaryKey;
         signByDefault = true;

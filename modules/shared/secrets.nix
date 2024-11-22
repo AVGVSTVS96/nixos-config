@@ -8,7 +8,7 @@ in
   # `config.age.secrets.<name>.path` or `/run/agenix/<name>`
 
   age = {
-    # Path to find identity (private) keys used to decrypt secrets
+    # Paths to find identity (private) keys used to decrypt secrets
     # These correspond to recipient (public) keys in secrets.nix
     # Defaults to ~/.ssh/id_ed25519, ~/.ssh/id_rsa
     #
@@ -42,6 +42,12 @@ in
 
       openai = {
         file = ../../secrets/openai.age;
+        owner = userName;
+        mode = "600";
+      };
+      gmail = {
+        file = ../../secrets/gmail.age;
+        path = "${homeDir}/.config/git/user_email";
         owner = userName;
         mode = "600";
       };

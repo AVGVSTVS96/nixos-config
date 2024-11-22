@@ -32,7 +32,7 @@
   outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, tokyonight, ragenix } @inputs:
     let
       variables = {
-        email = "bassim101@gmail.com";
+        # email is encrypted to .config/git/user_email and included in config
         userName = "bassim-nix";
         fullName = "Bassim Shahidy";
         hostName = {
