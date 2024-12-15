@@ -5,7 +5,7 @@ let
 in
 {
   imports = [
-    ../common.nix
+    ../nixos-common.nix
   ];
 
   shells.zsh.enable = true;
