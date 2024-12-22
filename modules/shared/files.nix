@@ -1,23 +1,24 @@
 { config, ... }:
-
+let
+  inherit (config.home) homeDirectory;
+  inherit (config.lib.file) mkOutOfStoreSymlink;
+  dotfiles = "${homeDirectory}/nixos-config/modules/shared/config";
+in
 {
   xdg.configFile = {
-    "nvim" = {
-      # mkOutOfStoreSymlink allows my nvim config to be symlinked directly from my nixos-config repo
-      # This makes it's config files writeable, allowing nvim to pick up changes without rebuilding nix
-      source = config.lib.file.mkOutOfStoreSymlink 
-        "${config.home.homeDirectory}/nixos-config/modules/shared/config/nvim";
+    # mkOutOfStoreSymlink symlinks directly from the source, instead of the nix store
+    # This allows the files to be writeable, allowing changes to be made without rebuilding nix
+    "nvim" = { 
+      source = mkOutOfStoreSymlink "${homeDirectory}/neovim-config";
       recursive = true;
-    };
+    }; 
 
     "lvim/config.lua" = {
-      source = config.lib.file.mkOutOfStoreSymlink 
-        "${config.home.homeDirectory}/nixos-config/modules/shared/config/lvim/config.lua";
+      source = mkOutOfStoreSymlink "${dotfiles}/lvim/config.lua";
     };
 
     "graphite/aliases" = {
-      source = config.lib.file.mkOutOfStoreSymlink 
-        "${config.home.homeDirectory}/nixos-config/modules/shared/config/graphite/aliases";
+      source = mkOutOfStoreSymlink "${dotfiles}/graphite/aliases";
     };
   };
 }
