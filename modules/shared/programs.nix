@@ -99,7 +99,7 @@ in
         prefix-highlight
         {
           plugin = power-theme;
-          extraConfig = ''
+          extraConfig = /*bash*/ ''
             set -g @tmux_power_theme 'gold'
           '';
         }
@@ -108,7 +108,7 @@ in
 
           # Use XDG data directory
           # https://github.com/tmux-plugins/tmux-resurrect/issues/348
-          extraConfig = ''
+          extraConfig = /*bash*/ ''
             set -g @resurrect-dir '$HOME/.cache/tmux/resurrect'
             set -g @resurrect-capture-pane-contents 'on'
             set -g @resurrect-pane-contents-area 'visible'
@@ -116,7 +116,7 @@ in
         }
         {
           plugin = continuum;
-          extraConfig = ''
+          extraConfig = /*bash*/ ''
             set -g @continuum-restore 'on'
             set -g @continuum-save-interval '5' # minutes
           '';
@@ -126,7 +126,7 @@ in
       prefix = "C-x";
       escapeTime = 10;
       historyLimit = 50000;
-      extraConfig = ''
+      extraConfig = /*bash*/ ''
         # Remove Vim mode delays
         set -g focus-events on
 
@@ -315,7 +315,7 @@ in
       settings = {
         ignorecase = true;
       };
-      extraConfig = ''
+      extraConfig = /*vim*/ ''
         "" General
         set number
         set history=1000
@@ -491,7 +491,7 @@ in
     wezterm = {
       enable = true;
       enableZshIntegration = isZsh;
-      extraConfig = ''
+      extraConfig = /*lua*/ ''
         local wezterm = require("wezterm")
 
         local config = wezterm.config_builder()
