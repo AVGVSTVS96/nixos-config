@@ -9,6 +9,7 @@ in
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
     useGlobalPkgs = true;
+    backupFileExtension = "hm-bak";
     users.${userName} =
       { pkgs, config, lib, ... }: {
         home = {
