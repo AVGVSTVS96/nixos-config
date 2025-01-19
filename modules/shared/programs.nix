@@ -1,13 +1,12 @@
 { pkgs, lib, variables, inputs, osConfig, ... }:
 
 let
-  inherit (variables) userName fullName email;
+  inherit (variables) userName fullName;
 
-  # `osConfig` allows us to access the top level nixos `config`,
-  # while `config` in this file would otherwise be home-manager's
-  #
-  # This makes shells.activeShell available, even though it's 
-  # defined and passed at the nix level, not directly to home-manager
+  # `osConfig` allows us to access nixos's `config` from home-manager
+  homeDir = osConfig.users.users.${userName}.home;
+  primaryKey = osConfig.age.secrets.primary.path;
+
   isFish = osConfig.shells.activeShell == "fish";
   isZsh = osConfig.shells.activeShell == "zsh";
 in
@@ -15,6 +14,7 @@ in
   imports = [
     inputs.tokyonight.homeManagerModules.default
   ];
+
   tokyonight.enable = true;
   tokyonight.style = "night";
 
@@ -63,7 +63,7 @@ in
     eza = {
       enable = true;
       git = true;
-      icons = true;
+      icons = "auto";
     };
 
     yazi = {
@@ -80,17 +80,11 @@ in
 
     ssh = {
       enable = true;
-      includes = [
-        (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/config_external")
-        (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/config_external")
-      ];
+      includes = [ "${homeDir}/.ssh/config_external" ];
       matchBlocks = {
         "github.com" = {
           identitiesOnly = true;
-          identityFile = [
-            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${userName}/.ssh/id_github")
-            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${userName}/.ssh/id_github")
-          ];
+          identityFile = [ primaryKey ];
         };
       };
       addKeysToAgent = "yes";
@@ -187,9 +181,11 @@ in
       enable = true;
       ignores = [ "*.swp" ];
       userName = fullName;
-      userEmail = email;
+      includes = [
+        { path = "./user_email"; }
+      ];
       signing = {
-        key = "~/.ssh/id_github";
+        key = primaryKey;
         signByDefault = true;
       };
       lfs.enable = true;

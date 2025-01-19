@@ -1,8 +1,9 @@
-{ lib, ... }:
+{ lib, config, variables, ... }:
 
 {
   imports = [
     ./nix.nix
+    ./secrets.nix
     ./shells/zsh.nix
     ./shells/fish.nix
   ];
@@ -22,7 +23,17 @@
   };
 
   config = {
-    # TODO: Find a better place to put this
-    environment.variables.EDITOR = "nvim";
+    # TODO: Find a better place to put this, maybe a new `common.nix` module 
+    # or keep it here and move the above options to a new `options.nix` module
+    environment.variables = {
+      EDITOR = "nvim";
+    };
+
+    home-manager.users.${variables.userName} = {
+      home.sessionVariables = {
+        ANTHROPIC_API_KEY = "`cat ${config.age.secrets.anthropic.path}`";
+        OPENAI_API_KEY = "`cat ${config.age.secrets.openai.path}`";
+      };
+    };
   };
 }
