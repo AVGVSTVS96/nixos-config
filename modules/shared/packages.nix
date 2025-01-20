@@ -12,15 +12,11 @@
     # Encryption and security tools
     age
     gnupg
-    # age-plugin-yubikey
-    # libfido2
 
     # Media-related packages
     # ffmpeg
 
     # Fonts
-    # emacs-all-the-icons-fonts
-    # dejavu_fonts
     font-awesome
     hack-font
     noto-fonts
@@ -49,7 +45,6 @@
     # Text and terminal utilities
     jq
     ripgrep
-    tmux
     lunarvim
     neovim
   ];
