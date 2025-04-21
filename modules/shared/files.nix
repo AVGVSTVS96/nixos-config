@@ -14,5 +14,10 @@
       source = config.lib.file.mkOutOfStoreSymlink 
         "${config.home.homeDirectory}/nixos-config/modules/shared/config/lvim/config.lua";
     };
+
+    "graphite/aliases" = {
+      source = config.lib.file.mkOutOfStoreSymlink 
+        "${config.home.homeDirectory}/nixos-config/modules/shared/config/graphite/aliases";
+    };
   };
 }
