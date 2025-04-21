@@ -47,21 +47,21 @@ in
 
     # Homebrew shell integration
     home-manager.users.${userName}.programs = {
-      zsh.initExtra = mkIf cfg.enableZshIntegration ''
+      zsh.initExtra = mkIf cfg.enableZshIntegration /*bash*/ ''
         eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
       '';
 
-      bash.initExtra = mkIf cfg.enableBashIntegration ''
+      bash.initExtra = mkIf cfg.enableBashIntegration /*bash*/ ''
         eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
       '';
 
-      fish.interactiveShellInit = mkIf cfg.enableFishIntegration ''
+      fish.interactiveShellInit = mkIf cfg.enableFishIntegration /*bash*/ ''
         eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
       '';
 
       # https://www.nushell.sh/book/configuration.html#homebrew
       # https://reimbar.org/dev/nushell/
-      nushell.extraEnv = mkIf cfg.enableFishIntegration ''
+      nushell.extraEnv = mkIf cfg.enableFishIntegration /*bash*/ ''
         # $env.PATH = ($env.PATH | split row (char esep) | prepend '/opt/homebrew/bin') 
         use std "path add"
         path add /opt/homebrew/bin
@@ -74,7 +74,8 @@ in
       enable = true;
       onActivation.cleanup = "uninstall";
 
-      # Fixes nix-darwin trying to untap nix-homebrew taps when uninstall is set
+      # Fixes nix-darwin trying to untap nix-homebrew taps 
+      # when onActivation.cleanup = uninstall/zap is set
       # https://github.com/zhaofengli/nix-homebrew/issues/5
       taps = builtins.attrNames config.nix-homebrew.taps;
 
