@@ -94,6 +94,20 @@ in
           ];
         };
       };
+      keymap = {
+        manager.prepend_keymap = [
+          {
+            on = "<PageUp>";
+            run = "seek -1";
+            desc = "Scroll up in preview";
+          }
+          {
+            on = "<PageDown>";
+            run = "seek 1";
+            desc = "Scroll down in preview";
+          }
+        ];
+      };
     };
 
     ssh = {
@@ -554,7 +568,7 @@ in
           })
 
           config.max_fps = 120
-          
+
           -- Needed for Nix
           config.front_end = "WebGpu"
 
