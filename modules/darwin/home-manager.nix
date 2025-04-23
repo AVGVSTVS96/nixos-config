@@ -4,10 +4,9 @@ let
   inherit (variables) userName;
 in
 {
-  imports = [ ./dock ];
-
-  fonts.packages = [
-    pkgs.nerd-fonts.monaspace
+  imports = [ 
+    ./dock
+    ./packages.nix
   ];
 
   home-manager = {
@@ -22,7 +21,6 @@ in
         };
         imports = [
           ./files.nix
-          ./packages.nix
           ../shared/programs.nix
         ];
         xdg.enable = true;

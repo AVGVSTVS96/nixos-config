@@ -4,6 +4,8 @@ let
   inherit (variables) userName;
 in
 {
+  imports = [ ./packages.nix ];
+
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
     useGlobalPkgs = true;
@@ -19,7 +21,6 @@ in
 
         imports = [
           ./files.nix
-          ./packages.nix
           ../shared/programs.nix
         ];
 
