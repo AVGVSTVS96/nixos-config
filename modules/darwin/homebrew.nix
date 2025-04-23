@@ -13,20 +13,20 @@ in
     # TODO: PR merged, update and test using nix-darwin interactiveShellInit
     # instead of home-manager shell config like in PR
     #
-    nix-homebrew = {
-      enableZshIntegration = mkEnableOption "homebrew zsh integration" // {
-        default = false;
-      };
-      enableBashIntegration = mkEnableOption "homebrew bash integration" // {
-        default = false;
-      };
-      enableFishIntegration = mkEnableOption "homebrew fish integration" // {
-        default = false;
-      };
-      enableNushellIntegration = mkEnableOption "homebrew nushell integration" // {
-        default = false;
-      };
-    };
+    # nix-homebrew = {
+    #   enableZshIntegration = mkEnableOption "homebrew zsh integration" // {
+    #     default = false;
+    #   };
+    #   enableBashIntegration = mkEnableOption "homebrew bash integration" // {
+    #     default = false;
+    #   };
+    #   enableFishIntegration = mkEnableOption "homebrew fish integration" // {
+    #     default = false;
+    #   };
+    #   enableNushellIntegration = mkEnableOption "homebrew nushell integration" // {
+    #     default = false;
+    #   };
+    # };
   };
 
   config = {
@@ -46,27 +46,27 @@ in
     };
 
     # Homebrew shell integration
-    home-manager.users.${userName}.programs = {
-      zsh.initExtra = mkIf cfg.enableZshIntegration /*bash*/ ''
-        eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
-      '';
-
-      bash.initExtra = mkIf cfg.enableBashIntegration /*bash*/ ''
-        eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
-      '';
-
-      fish.interactiveShellInit = mkIf cfg.enableFishIntegration /*bash*/ ''
-        eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
-      '';
-
-      # https://www.nushell.sh/book/configuration.html#homebrew
-      # https://reimbar.org/dev/nushell/
-      nushell.extraEnv = mkIf cfg.enableFishIntegration /*bash*/ ''
-        # $env.PATH = ($env.PATH | split row (char esep) | prepend '/opt/homebrew/bin') 
-        use std "path add"
-        path add /opt/homebrew/bin
-      '';
-    };
+    # home-manager.users.${userName}.programs = {
+    #   zsh.initExtra = mkIf cfg.enableZshIntegration /*bash*/ ''
+    #     eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
+    #   '';
+    #
+    #   bash.initExtra = mkIf cfg.enableBashIntegration /*bash*/ ''
+    #     eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
+    #   '';
+    #
+    #   fish.interactiveShellInit = mkIf cfg.enableFishIntegration /*bash*/ ''
+    #     eval "$(${config.homebrew.brewPrefix}/brew shellenv)"
+    #   '';
+    #
+    #   # https://www.nushell.sh/book/configuration.html#homebrew
+    #   # https://reimbar.org/dev/nushell/
+    #   nushell.extraEnv = mkIf cfg.enableFishIntegration /*bash*/ ''
+    #     # $env.PATH = ($env.PATH | split row (char esep) | prepend '/opt/homebrew/bin') 
+    #     use std "path add"
+    #     path add /opt/homebrew/bin
+    #   '';
+    # };
 
     # nix-darwin homebrew module
     # Manages homebrew packages
