@@ -1,9 +1,9 @@
-{ variables, inputs, config, lib, ... }:
+{ variables, inputs, config, ... }:
 let
   inherit (variables) userName;
   inherit (inputs) homebrew-bundle homebrew-core homebrew-cask;
-  inherit (lib) mkIf mkEnableOption;
-  cfg = config.nix-homebrew;
+  # inherit (lib) mkIf mkEnableOption;
+  # cfg = config.nix-homebrew;
 in
 {
   options = {
