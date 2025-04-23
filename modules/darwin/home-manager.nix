@@ -4,7 +4,10 @@ let
   inherit (variables) userName;
 in
 {
-  imports = [ ./dock ];
+  imports = [ 
+    ./dock
+    ./packages.nix
+  ];
 
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
@@ -18,7 +21,6 @@ in
         };
         imports = [
           ./files.nix
-          ./packages.nix
           ../shared/programs.nix
         ];
         xdg.enable = true;

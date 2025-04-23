@@ -1,6 +1,11 @@
-{ pkgs, ... }:
-
+{ pkgs, variables, ... }:
+let
+  inherit (variables) userName;
+in
 {
   imports = [ ../shared/packages.nix ];
-  home.packages = with pkgs; [ dockutil ];
+
+  home-manager.users.${userName} = {
+    home.packages = with pkgs; [ dockutil ];
+  };
 }
