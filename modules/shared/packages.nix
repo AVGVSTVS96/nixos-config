@@ -23,7 +23,7 @@
     noto-fonts-emoji
     meslo-lgs-nf
     jetbrains-mono
-    (pkgs.nerdfonts.override { fonts = [ "Monaspace" ]; })
+    # (pkgs.nerdfonts.override { fonts = [ "Monaspace" ]; })
 
     # Git
     gh

@@ -6,6 +6,10 @@ in
 {
   imports = [ ./dock ];
 
+  fonts.packages = [
+    pkgs.nerd-fonts.monaspace
+  ];
+
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
     useGlobalPkgs = true;
