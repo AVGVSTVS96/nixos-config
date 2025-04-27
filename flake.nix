@@ -54,22 +54,39 @@
           darwin = "nixos-mac";
         };
       };
-      linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
-      darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
+      linuxSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      darwinSystems = [
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
 
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
       pkgsForSystem = system: import nixpkgs { inherit system; };
 
-      devShell = system: let pkgs = pkgsForSystem system; in {
-        default = with pkgs; mkShell {
-            nativeBuildInputs = with pkgs; [ bashInteractive git ];
-            shellHook = ''
-              export EDITOR=vim
-            '';
-          };
+      devShell =
+        system:
+        let
+          pkgs = pkgsForSystem system;
+        in
+        {
+          default =
+            with pkgs;
+            mkShell {
+              nativeBuildInputs = with pkgs; [
+                bashInteractive
+                git
+              ];
+              shellHook = ''
+                export EDITOR=nvim
+              '';
+            };
         };
 
-      mkApp = scriptName: system:
+      mkApp =
+        scriptName: system:
         let
           pkgs = pkgsForSystem system;
           scriptContent = builtins.readFile (./. + "/apps/${system}/${scriptName}");
@@ -101,8 +118,9 @@
       devShells = forAllSystems devShell;
       apps = forAllSystems mkAppsFromDir;
 
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems ( 
-        system: darwin.lib.darwinSystem {
+      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
+        system:
+        darwin.lib.darwinSystem {
           inherit system;
           specialArgs = { inherit variables inputs; };
           modules = [
@@ -116,16 +134,18 @@
 
       nixosConfigurations =
         let
-          mkNixos = host: system: nixpkgs.lib.nixosSystem {
-            inherit system;
-            specialArgs = { inherit variables inputs; };
-            modules = [
-              disko.nixosModules.disko
-              home-manager.nixosModules.home-manager
-              ragenix.nixosModules.default
-              ./hosts/${host}
-            ];
-          };
+          mkNixos =
+            host: system:
+            nixpkgs.lib.nixosSystem {
+              inherit system;
+              specialArgs = { inherit variables inputs; };
+              modules = [
+                disko.nixosModules.disko
+                home-manager.nixosModules.home-manager
+                ragenix.nixosModules.default
+                ./hosts/${host}
+              ];
+            };
         in
         {
           "nixos-x86_64" = mkNixos "nixos" "x86_64-linux";
