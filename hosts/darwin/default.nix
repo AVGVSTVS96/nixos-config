@@ -23,7 +23,10 @@ in
   };
 
   # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # INFO:: nix-darwin now manages nix-daemon
+  # unconditionally when `nix.enable` is on.
+  # services.nix-daemon.enable = true;
+  # nix.enable = false;
 
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
@@ -35,7 +38,7 @@ in
 
   # MacOS settings
   system = {
-    stateVersion = 4;
+    stateVersion = 5;
 
     defaults = {
       NSGlobalDomain = {
