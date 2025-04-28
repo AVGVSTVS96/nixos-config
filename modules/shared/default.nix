@@ -4,7 +4,6 @@
   imports = [
     ./nix.nix
     ./options.nix
-    ./packages.nix
     ./secrets.nix
     ./shells/zsh.nix
     ./shells/fish.nix
@@ -21,5 +20,4 @@
       OPENAI_API_KEY = "`cat ${config.age.secrets.openai.path}`";
     };
   };
-
 }

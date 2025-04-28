@@ -7,7 +7,6 @@ let
 in
 {
   imports = [
-    ../../modules/darwin/dock
     ../../modules/darwin/homebrew.nix
     ../../modules/darwin/home-manager.nix
     ../../modules/shared/cachix
