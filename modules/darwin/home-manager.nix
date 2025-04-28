@@ -4,11 +4,6 @@ let
   inherit (variables) userName;
 in
 {
-  imports = [ 
-    ./dock
-    ./packages.nix
-  ];
-
   home-manager = {
     extraSpecialArgs = { inherit variables inputs; };
     useGlobalPkgs = true;

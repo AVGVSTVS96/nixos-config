@@ -4,6 +4,7 @@
   imports = [
     ./nix.nix
     ./options.nix
+    ./packages.nix
     ./secrets.nix
     ./shells/zsh.nix
     ./shells/fish.nix
