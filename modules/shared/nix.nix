@@ -7,7 +7,10 @@ in
   nix = {
     package = pkgs.nix;
     settings.allowed-users = [ "${userName}" ];
-    settings.trusted-users = [ "@admin" "${userName}" ];
+    settings.trusted-users = [
+      "@admin"
+      "${userName}"
+    ];
 
     gc =
       {
@@ -15,7 +18,6 @@ in
         options = "--delete-older-than 30d";
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-        user = "root";
         interval = { Weekday = 0; Hour = 2; Minute = 0; };
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
@@ -51,7 +53,7 @@ in
       # ++ [(import (builtins.fetchTarball {
       #          url = "https://github.com/dustinlyons/emacs-overlay/archive/refs/heads/master.tar.gz";
       #          sha256 = "06413w510jmld20i4lik9b36cfafm501864yq8k4vxl5r4hn0j0h";
-      #      }))] 
+      #      }))]
     );
   };
 }

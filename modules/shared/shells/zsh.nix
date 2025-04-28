@@ -1,6 +1,17 @@
-{ pkgs, lib, config, variables, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  variables,
+  ...
+}:
 let
-  inherit (lib) mkIf mkEnableOption mkMerge optionalAttrs;
+  inherit (lib)
+    mkIf
+    mkEnableOption
+    mkMerge
+    optionalAttrs
+    ;
   inherit (variables) userName;
   zsh = config.shells.zsh;
 in
@@ -29,7 +40,6 @@ in
       enable = true;
       autocd = false;
       autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
       enableCompletion = true;
       shellAliases = {
         # General aliases
@@ -51,47 +61,57 @@ in
         lt3 = "eza --git --icons=always --color=always --long --no-filesize -all --tree --level=4";
         ltg = "eza --git --icons=always --color=always --long --no-filesize --tree --git-ignore";
       };
-      initExtra = /*bash*/ ''
-        # Advanced customization of fzf options via _fzf_comprun function
-        _fzf_comprun() {
-          local command=$1
-          shift
-
-          case "$command" in
-            cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-            export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
-            ssh)          fzf --preview 'dig {}'                   "$@" ;;
-            *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
-          esac
-        }
-
-
-        # -- fzf with bat and eza previews --
-        show_file_or_dir_preview='if [ -d {} ]; then eza --tree --all --level=3 --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'
-        alias lspe="fzf --preview '$show_file_or_dir_preview'"
-        alias lsp="fd --max-depth 1 --hidden --follow --exclude .git | fzf --preview '$show_file_or_dir_preview'"
-      '';
       plugins = [
         {
           name = "fzf-git-sh";
           src = pkgs.fzf-git-sh;
           file = "share/fzf-git-sh/fzf-git.sh";
         }
+        {
+          name = "fast-syntax-highlighting";
+          src = pkgs.zsh-fast-syntax-highlighting;
+          file = "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
+        }
       ];
-      initExtraFirst = /*bash*/ ''
-        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-        fi
+      initContent =
+        lib.mkOrder 500
+          # bash
+          ''
+            if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+              . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+              . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            fi
 
-        # Define variables for directories
-        export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
-        export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
-        export PATH=$HOME/.local/share/bin:$PATH
+            # Define variables for directories
+            export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
+            export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
+            export PATH=$HOME/.local/share/bin:$PATH
 
-        # Remove history data we don't want to see
-        export HISTIGNORE="pwd:ls:cd"
-      '';
+            # Remove history data we don't want to see
+            export HISTIGNORE="pwd:ls:cd"
+          ''
+        // lib.mkOrder 1000
+          # bash
+          ''
+            # Advanced customization of fzf options via _fzf_comprun function
+            _fzf_comprun() {
+              local command=$1
+              shift
+
+              case "$command" in
+                cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+                export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
+                ssh)          fzf --preview 'dig {}'                   "$@" ;;
+                *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+              esac
+            }
+
+
+            # -- fzf with bat and eza previews --
+            show_file_or_dir_preview='if [ -d {} ]; then eza --tree --all --level=3 --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'
+            alias lspe="fzf --preview '$show_file_or_dir_preview'"
+            alias lsp="fd --max-depth 1 --hidden --follow --exclude .git | fzf --preview '$show_file_or_dir_preview'"
+          '';
     };
 
     # Set nix managed system shell
