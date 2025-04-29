@@ -1,10 +1,13 @@
+## NixOS
+Configuration modules specific to NixOS systems.
+
 ## Layout
 ```
 .
-├── config             # Config files not written in Nix
-├── default.nix        # Defines module, system-level config,
+├── config/            # Config files not written in Nix
 ├── disk-config.nix    # Disks, partitions, and filesystems
-├── files.nix          # Non-Nix, static configuration files (now immutable!)
-├── home-manager.nix   # Defines user programs
-├── packages.nix       # List of packages to install for NixOS
+├── files.nix          # Symlinks for non-nix config files
+├── home-manager.nix   # Home-manager configuration for NixOS
+├── packages.nix       # List of additional packages to install for NixOS
+└── README.md          # This file
 ```
