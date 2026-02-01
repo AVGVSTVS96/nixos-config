@@ -33,7 +33,7 @@ in
       enable = true;
       enableZshIntegration = isZsh;
       enableFishIntegration = isFish;
-      useTheme = "tokyonight_storm";
+      settings = builtins.fromJSON (builtins.readFile ./config/oh-my-posh/tokyonight_storm-customized.omp.json);
     };
 
     # ---------------------
@@ -122,55 +122,6 @@ in
       addKeysToAgent = "yes";
     };
 
-    tmux = {
-      enable = true;
-      sensibleOnTop = false;
-      shell = shell;
-      plugins = [ pkgs.tmuxPlugins.catppuccin ];
-      extraConfig = # bash
-        ''
-          set -g default-terminal "$TERM"
-          set -ag terminal-overrides ",$TERM:Tc"
-
-          set -g mouse on
-          set -g history-limit 10000
-
-          # Make TMUX work with yazi
-          set -g allow-passthrough on
-          set -ga update-environment TERM
-          set -ga update-environment TERM_PROGRAM
-
-          # Avoid ESC delay
-          set -s escape-time 0
-
-          # Vim style pane selection
-          bind h select-pane -L
-          bind j select-pane -D 
-          bind k select-pane -U
-          bind l select-pane -R
-
-          # Start windows and panes at 1, not 0
-          set -g base-index 1
-          set -g pane-base-index 1
-          set-window-option -g pane-base-index 1
-          set-option -g renumber-windows on
-
-          # Use Alt-arrow keys without prefix key to switch panes
-          bind -n M-Left select-pane -L
-          bind -n M-Right select-pane -R
-          bind -n M-Up select-pane -U
-          bind -n M-Down select-pane -D
-
-          # Shift arrow to switch windows
-          bind -n S-Left  previous-window
-          bind -n S-Right next-window
-
-          # Shift Alt vim keys to switch windows
-          bind -n M-H previous-window
-          bind -n M-L next-window
-        '';
-    };
-
     # -----------------------
     # -- Git configuration --
     # -----------------------
@@ -208,6 +159,10 @@ in
         rerere.enabled = true;
         merge.conflictsyle = "diff3";
         diff.colorMoved = "default";
+        # URL shortcuts for git
+        "url.git@github.com:avgvstvs96/".insteadOf = "av:";
+        "url.git@github.com:assistant-ui/".insteadOf = "aui:";
+        "url.git@github.com:".insteadOf = "gh:";
       };
       aliases = {
         a = "add .";
@@ -219,6 +174,7 @@ in
         p = "push";
         pf = "push --force-with-lease origin";
         update-last-commit = "!git commit -a --amend --no-edit && git push --force-with-lease origin";
+        yolo = "!git commit -m \"$(curl -s https://whatthecommit.com/index.txt)\"";
       };
     };
 
@@ -495,6 +451,19 @@ in
 
           local config = wezterm.config_builder()
           local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
+
+          -- Key bindings
+          config.keys = {
+            { -- key binding for new lines in claude code cli
+              key = "Enter",
+              mods = "SHIFT",
+              action = wezterm.action_callback(function(window, pane)
+                window:perform_action(wezterm.action.SendString("\\"), pane)
+                wezterm.sleep_ms(10) -- delay so claude code can process and delete the backslash
+                window:perform_action(wezterm.action.SendKey({ key = "Enter" }), pane)
+              end),
+            },
+          }
 
           -- config.font = wezterm.font("MonaspiceKr Nerd Font")
           config.font = wezterm.font_with_fallback({ "MonaspiceKr Nerd Font", "Monaspace Krypton" })

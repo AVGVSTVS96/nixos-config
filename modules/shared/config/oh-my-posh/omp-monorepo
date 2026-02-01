@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# If not in a git repo: show "~" or cwd
+if ! repo_root="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  [ "$PWD" = "$HOME" ] && { printf "~"; exit 0; }
+  printf "%s" "$(basename "$PWD")"
+  exit 0
+fi
+
+repo="$(basename "$repo_root")"
+
+# Path relative to repo root ("" at root)
+case "$PWD" in
+  "$repo_root") rel="";;
+  "$repo_root"/*) rel="${PWD#"$repo_root"/}";;
+  *) rel="";;
+esac
+
+# Detect monorepo by pnpm or workspaces
+# TODO: pnpm-workspace.yml doesn't necessissitate monorepo, check for packages field
+is_mono=0
+if [ -f "$repo_root/pnpm-workspace.yaml" ] || [ -f "$repo_root/pnpm-workspace.yml" ]; then
+  is_mono=1
+elif [ -f "$repo_root/package.json" ] && grep -q '"workspaces"[[:space:]]*:' "$repo_root/package.json"; then
+  is_mono=1
+fi
+
+sub=""
+if [ "$is_mono" -eq 1 ]; then
+  if [ -z "$rel" ]; then
+    sub="root"
+  else
+    case "$rel" in
+      apps/*|app/*|packages/*|examples/*|plugins/*|tools/*|services/*)
+        sub="${rel#*/}"; sub="${sub%%/*}"
+        ;;
+      *)
+        sub="${rel%%/*}"
+        ;;
+    esac
+  fi
+else
+  # single-package repo: no subproject label; keep prompt as repo[cwd]
+  sub=""
+fi
+
+cwd_leaf="$(basename "$PWD")"
+[ -z "$rel" ] && cwd_leaf="root"
+
+printf "%s;%s;%s" "$repo" "$sub" "$cwd_leaf"

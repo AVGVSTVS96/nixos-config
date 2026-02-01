@@ -54,6 +54,7 @@ in
       ripgrep
       lunarvim
       neovim
+      tmux # Config managed via traditional tmux.conf + TPM
     ];
   };
 }

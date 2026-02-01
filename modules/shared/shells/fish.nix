@@ -37,6 +37,9 @@ in
         # Nix aliases
         ns  = "git add . && nix run .#build-switch";
         nb  = "git add . && nix run .#build";
+        # Git aliases - advanced
+        "conv-commit" = "sh ~/commit.sh";
+        "yolo-commit" = "git commit -m \"$(curl -s https://whatthecommit.com/index.txt)\"";
         # Eza aliases
         ls  = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time";
         lsa = "eza --git --icons=always --color=always --long --no-user --no-permissions --no-filesize --no-time --all";
