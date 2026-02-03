@@ -113,13 +113,16 @@ in
     ssh = {
       enable = true;
       includes = [ "${homeDir}/.ssh/config_external" ];
+      enableDefaultConfig = false;
       matchBlocks = {
+        "*" = {
+          addKeysToAgent = "yes";
+        };
         "github.com" = {
           identitiesOnly = true;
           identityFile = [ primaryKey ];
         };
       };
-      addKeysToAgent = "yes";
     };
 
     # -----------------------
@@ -128,27 +131,17 @@ in
     git = {
       enable = true;
       ignores = [ "*.swp" ];
-      userName = fullName;
       includes = [
         { path = "./user_email"; }
       ];
       signing = {
         key = primaryKey;
         signByDefault = true;
+        format = "ssh";
       };
       lfs.enable = true;
-      # setting `delta.enable = true;` sets
-      #   `core.pager = "delta"` and
-      #   `interactive.diffFilter = "delta --color-only";`
-      # by default, so they don't need to be set manually
-      delta.enable = true;
-      delta.options = {
-        line-numbers = true;
-        side-by-side = true;
-        navigate = true;
-      };
-      extraConfig = {
-        gpg.format = "ssh";
+      settings = {
+        user.name = fullName;
         init.defaultBranch = "main";
         core = {
           editor = "nvim";
@@ -160,21 +153,36 @@ in
         merge.conflictsyle = "diff3";
         diff.colorMoved = "default";
         # URL shortcuts for git
-        "url.git@github.com:avgvstvs96/".insteadOf = "av:";
-        "url.git@github.com:assistant-ui/".insteadOf = "aui:";
-        "url.git@github.com:".insteadOf = "gh:";
+        "url \"git@github.com:avgvstvs96/\"".insteadOf = "av:";
+        "url \"git@github.com:assistant-ui/\"".insteadOf = "aui:";
+        "url \"git@github.com:\"".insteadOf = "gh:";
+        alias = {
+          a = "add .";
+          c = "commit";
+          ca = "commit -a";
+          cam = "commit -a --amend --no-edit";
+          f = "fetch";
+          pl = "pull";
+          p = "push";
+          pf = "push --force-with-lease origin";
+          update-last-commit = "!git commit -a --amend --no-edit && git push --force-with-lease origin";
+          yolo = "!git commit -m \"$(curl -s https://whatthecommit.com/index.txt)\"";
+        };
       };
-      aliases = {
-        a = "add .";
-        c = "commit";
-        ca = "commit -a";
-        cam = "commit -a --amend --no-edit";
-        f = "fetch";
-        pl = "pull";
-        p = "push";
-        pf = "push --force-with-lease origin";
-        update-last-commit = "!git commit -a --amend --no-edit && git push --force-with-lease origin";
-        yolo = "!git commit -m \"$(curl -s https://whatthecommit.com/index.txt)\"";
+    };
+
+    # Delta (git diff viewer)
+    # setting `delta.enable = true;` sets
+    #   `core.pager = "delta"` and
+    #   `interactive.diffFilter = "delta --color-only";`
+    # by default, so they don't need to be set manually
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        line-numbers = true;
+        side-by-side = true;
+        navigate = true;
       };
     };
 

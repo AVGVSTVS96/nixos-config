@@ -32,7 +32,8 @@ in
   };
 
   # Fully declarative dock using the latest from Nix Store
-  local.dock.enable = true;
+  # TODO: Re-enable when swift builds on nixpkgs-unstable (see nixpkgs#343210)
+  local.dock.enable = false;
   local.dock.entries = [
     { path = "/System/Applications/Launchpad.app"; }
     { path = "/Applications/Visual Studio Code - Insiders.app/"; }

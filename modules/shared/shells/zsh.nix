@@ -38,6 +38,7 @@ in
 
     home-manager.users.${userName}.programs.zsh = {
       enable = true;
+      dotDir = "${config.users.users.${userName}.home}/.config/zsh";
       autocd = false;
       autosuggestion.enable = true;
       enableCompletion = true;

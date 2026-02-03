@@ -39,6 +39,7 @@ in
   # MacOS settings
   system = {
     stateVersion = 5;
+    primaryUser = userName;
 
     defaults = {
       NSGlobalDomain = {
