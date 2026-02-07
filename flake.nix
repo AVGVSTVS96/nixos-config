@@ -13,7 +13,13 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
+    nixos-wsl.url = "github:nix-community/NixOS-WSL";
+    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    nix-ld.url = "github:Mic92/nix-ld";
+    nix-ld.inputs.nixpkgs.follows = "nixpkgs";
 
     homebrew-bundle.url = "github:homebrew/homebrew-bundle";
     homebrew-bundle.flake = false;
@@ -47,10 +53,12 @@
         # email is encrypted to .config/git/user_email and included in config
         userName = "bassim-nix";
         fullName = "Bassim Shahidy";
+        timeZone = "America/New_York";
         hostName = {
           nixos = "nixos";
           vm = "nixos-vm";
           darwin = "nixos-mac";
+          wsl = "nixos-wsl";
         };
       };
       linuxSystems = [

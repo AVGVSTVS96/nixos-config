@@ -1,6 +1,6 @@
 { variables, pkgs, lib, ... }:
 let
-  inherit (variables) userName;
+  inherit (variables) userName timeZone;
 in
 {
   imports = [
@@ -34,7 +34,7 @@ in
   #   openssh.authorizedKeys.keys = keys;
   # };
 
-  time.timeZone = "America/New_York";
+  time = { inherit timeZone; };
 
   services = {
     xserver = {
